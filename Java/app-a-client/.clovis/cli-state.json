@@ -1,0 +1,50 @@
+{
+  "artifactLanguage": "pt",
+  "workMode": "maintenance",
+  "discoveryAnswers": {
+    "systemType": "backend usado pra uma POC de conexão com keycloak usando jwks na aplicação servidora para validação da chave. Esta é a aplicação cliente que deverá pegar o token no keycloak e usar para fazer requisições em outra aplicação",
+    "scope": {
+      "type": "whole_project"
+    },
+    "restrictions": [
+      "presetar a autenticação atual, mas será necessário ajustes"
+    ]
+  },
+  "domainIndex": [
+    {
+      "name": "Autenticação Máquina-a-Máquina",
+      "slug": "autenticacao-maquina-a-maquina",
+      "dependsOn": [],
+      "order": 0,
+      "documented": true,
+      "specified": true
+    },
+    {
+      "name": "Integração com a App B",
+      "slug": "integracao-app-b",
+      "dependsOn": [
+        "autenticacao-maquina-a-maquina"
+      ],
+      "order": 1,
+      "documented": true,
+      "specified": true
+    }
+  ],
+  "technicalSkillIndex": [
+    {
+      "name": "Documentação de API (OpenAPI)",
+      "slug": "documentacao-api-openapi",
+      "description": "Como manter a documentação do contrato REST via Swagger/OpenAPI com springdoc-openapi: anotar/expor os endpoints, gerar o OpenAPI e o Swagger UI e manter o contrato atualizado. Carregar ao criar ou alterar endpoints REST.",
+      "documented": true
+    }
+  ],
+  "authoritativeDocsSource": {
+    "kind": "skills"
+  },
+  "implementedSpecs": [
+    {
+      "slug": "001-integracao-app-b-correcao-bean-restclient-builder",
+      "closedAt": "2026-07-17T16:46:11.403Z"
+    }
+  ]
+}

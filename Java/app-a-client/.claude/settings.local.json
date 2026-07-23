@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(mvn -v)",
+      "PowerShell(Write-Output \"JAVA_HOME=$env:JAVA_HOME\"; Get-Command java -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source; Get-Command mvn -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)",
+      "PowerShell($roots = @\\(\"C:\\\\Program Files\\\\Java\",\"C:\\\\Program Files\\\\Eclipse Adoptium\",\"C:\\\\Program Files\\\\Microsoft\",\"C:\\\\Program Files\\\\Amazon Corretto\",\"C:\\\\Program Files\\\\Zulu\",\"D:\\\\Tools\"\\); foreach \\($r in $roots\\) { if \\(Test-Path $r\\) { Get-ChildItem $r -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '21|jdk' } | Select-Object FullName } })"
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: certification-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: certification
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default_network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.2
+    container_name: certification-keycloak
+    restart: always
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: password
+      KC_HEALTH_ENABLED: "false"
+      KC_METRICS_ENABLED: "false"
+      KC_CACHE: local
+    command:
+      - start-dev
+      - --import-realm
+      - --spi-theme-static-max-age=-1
+      - --spi-theme-cache-themes=false
+      - --spi-theme-cache-templates=false
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # volumes:
+      # - ./.keycloak/realm-exports/default.json:/opt/keycloak/data/import/realm-export.json
+    ports:
+      - "8080:8080"
+    networks:
+      - default_network
+
+networks:
+  default_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+ 

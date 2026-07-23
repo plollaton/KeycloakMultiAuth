@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: app-a-client
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak-client-credentials:
+            provider: keycloak
+            client-id: ${APP_A_CLIENT_ID:app-a}
+            client-secret: ${APP_A_CLIENT_SECRET:changeit}
+            authorization-grant-type: client_credentials
+            # escopo/client scope configurado no Keycloak; usado para restringir o que o token permite
+            scope: app-b.invoke
+        provider:
+          keycloak:
+            # descoberta automatica de token-uri/jwks-uri via /.well-known/openid-configuration
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak.example.com/realms/financeiro}
+
+app:
+  app-b:
+    base-url: ${APP_B_BASE_URL:http://localhost:8082}
+    registration-id: keycloak-client-credentials
+
+logging:
+  level:
+    org.springframework.security: INFO
