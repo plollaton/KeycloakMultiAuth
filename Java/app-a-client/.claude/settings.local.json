@@ -3,7 +3,26 @@
     "allow": [
       "PowerShell(mvn -v)",
       "PowerShell(Write-Output \"JAVA_HOME=$env:JAVA_HOME\"; Get-Command java -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source; Get-Command mvn -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)",
-      "PowerShell($roots = @\\(\"C:\\\\Program Files\\\\Java\",\"C:\\\\Program Files\\\\Eclipse Adoptium\",\"C:\\\\Program Files\\\\Microsoft\",\"C:\\\\Program Files\\\\Amazon Corretto\",\"C:\\\\Program Files\\\\Zulu\",\"D:\\\\Tools\"\\); foreach \\($r in $roots\\) { if \\(Test-Path $r\\) { Get-ChildItem $r -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '21|jdk' } | Select-Object FullName } })"
+      "PowerShell($roots = @\\(\"C:\\\\Program Files\\\\Java\",\"C:\\\\Program Files\\\\Eclipse Adoptium\",\"C:\\\\Program Files\\\\Microsoft\",\"C:\\\\Program Files\\\\Amazon Corretto\",\"C:\\\\Program Files\\\\Zulu\",\"D:\\\\Tools\"\\); foreach \\($r in $roots\\) { if \\(Test-Path $r\\) { Get-ChildItem $r -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '21|jdk' } | Select-Object FullName } })",
+      "Bash(python -c \"data=open\\('.agents/skills/autenticacao-maquina-a-maquina/SKILL.md','rb'\\).read\\(\\); print\\('BOM' if data[:3]==b'\\\\xef\\\\xbb\\\\xbf' else 'no-BOM'\\); print\\('CRLF' if b'\\\\r\\\\n' in data else 'LF'\\)\")",
+      "Bash(xxd)",
+      "Bash(java -version)",
+      "Bash(mvn -v)",
+      "Read(//c/Program Files/Java/**)",
+      "Read(//c/Program Files/Eclipse Adoptium/**)",
+      "Read(//c/Users/pio.neto/.jdks/**)",
+      "Read(//c/Program Files/Microsoft/**)",
+      "Bash('C:\\\\Users\\\\pio.neto/.jdks/corretto-21.0.6/bin/java' -version)",
+      "Read(//c/Users/pio.neto/.jdks/corretto-21.0.6/bin/**)",
+      "Bash(curl -s \"https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-webmvc-ui/maven-metadata.xml\")",
+      "Bash(curl -s \"https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi/3.0.3/springdoc-openapi-3.0.3.pom\")",
+      "Bash(export JAVA_HOME=\"$HOME/.jdks/corretto-21.0.6\")",
+      "Bash(cd \"D:/Estudos/KeycloakMultiAuth/java/app-a-client\")",
+      "Bash(echo \"=== jar ===\")",
+      "Bash(ls -la target/*.jar)",
+      "Bash(echo \"=== manifest Add-Exports ===\")",
+      "Bash(find ~/.m2/repository/org/springframework/security -name \"spring-security-oauth2-client-*.jar\" 2>/dev/null | sort; echo \"---JOSE---\"; find ~/.m2/repository/org/springframework/security -name \"spring-security-oauth2-jose-*.jar\" 2>/dev/null | sort)",
+      "Bash(unzip -l spring-security-oauth2-client/7.0.5/spring-security-oauth2-client-7.0.5.jar)"
     ]
   }
 }

@@ -45,6 +45,10 @@
     {
       "slug": "001-integracao-app-b-correcao-bean-restclient-builder",
       "closedAt": "2026-07-17T16:46:11.403Z"
+    },
+    {
+      "slug": "002-credencial-signed-jwt-rotacao",
+      "closedAt": "2026-07-24T00:59:31.053Z"
     }
   ]
 }

@@ -43,12 +43,33 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:192.168.0.83"
     # volumes:
       # - ./.keycloak/realm-exports/default.json:/opt/keycloak/data/import/realm-export.json
     ports:
       - "8080:8080"
     networks:
       - default_network
+  appa:
+    build:
+      context: ../Java/app-a-client
+      dockerfile: Dockerfile
+    container_name: certification-appa
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/certification
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - postgres
+    networks:
+      - default_network
+        #    volumes:
+        #- .:/app
+        #- /app/target
+
 
 networks:
   default_network:

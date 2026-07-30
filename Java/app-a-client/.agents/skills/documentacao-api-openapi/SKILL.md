@@ -34,9 +34,11 @@ Postman e ADRs foram descartados). A documentação **não** é um arquivo
 anotações OpenAPI presentes no código, garantindo que o contrato acompanhe a
 implementação e seja versionado junto com ela.
 
-O objetivo é que qualquer endpoint REST exposto (hoje o
-`GET /demo/chamar-app-b` em `DemoController`) esteja descrito no OpenAPI gerado,
-com operação, respostas e schemas coerentes com o que o código realmente faz.
+O objetivo é que qualquer endpoint REST exposto esteja descrito no OpenAPI gerado,
+com operação, respostas e schemas coerentes com o que o código realmente faz. Os
+caminhos expostos a documentar são: `GET /demo/chamar-app-b` (`DemoController`),
+`POST /credencial/rotacionar-chave` (`CredencialController`) e
+`GET /.well-known/jwks.json` (`JwksController`).
 
 ## Como aplicar
 
@@ -75,8 +77,12 @@ Os endpoints já são detectados automaticamente por serem `@RestController` com
 
 O tipo de retorno e os parâmetros do método já viram schema automaticamente;
 as anotações servem para o que não é inferível (descrições, exemplos, respostas
-de erro). Documente também endpoints de demonstração — o `GET /demo/chamar-app-b`
-deve ter ao menos `@Operation` e as respostas esperadas.
+de erro). Documente todos os caminhos expostos: o `GET /demo/chamar-app-b`
+deve ter ao menos `@Operation` e as respostas esperadas; o
+`POST /credencial/rotacionar-chave` (resposta `200` com `{ kid, criadaEm }`, sem material
+privado) e o `GET /.well-known/jwks.json` (resposta `200` com o documento JWKS das chaves
+públicas correntes) devem ser anotados com `@Operation` e `@ApiResponse` coerentes com o
+que o código retorna.
 
 ### 3. Expor e conferir o contrato gerado
 
@@ -125,7 +131,9 @@ springdoc:
   `/v3/api-docs.yaml` e `/swagger-ui.html`; não há arquivo de contrato versionado
   à parte, o código é a fonte.
 - **`application.yml`** — configuração `springdoc.*` quando necessária.
-- **Endpoint atual a documentar:** `GET /demo/chamar-app-b` (`DemoController`).
+- **Endpoints a documentar:** `GET /demo/chamar-app-b` (`DemoController`),
+  `POST /credencial/rotacionar-chave` (`CredencialController`) e
+  `GET /.well-known/jwks.json` (`JwksController`).
 
 ## Restrições e armadilhas conhecidas
 

@@ -11,7 +11,7 @@ App B** (`integracao-app-b`).
 
 ---
 
-- [ ] **T1. Atualizar a documentação autoritativa afetada (drift deliberado)**
+- [x] **T1. Atualizar a documentação autoritativa afetada (drift deliberado)**
 
   Primeira tarefa: a implementação lê a doc durante a execução, então a doc corrigida precede as
   tarefas que a consomem. Origem: drift deliberado registrado em `plan.md` ("Impacto na documentação
@@ -46,7 +46,7 @@ App B** (`integracao-app-b`).
     documentado (consumo de `GET /api/protegido` com bearer anexado) não muda; os novos endpoints
     expostos são cobertos pela doc do domínio de autenticação e pela skill técnica de OpenAPI.
 
-- [ ] **T2. Geração e persistência do par de chaves e publicação do JWKS**
+- [x] **T2. Geração e persistência do par de chaves e publicação do JWKS**
 
   - Pré-requisito (infra desta unidade): adicionar ao `pom.xml` o `springdoc-openapi-starter-webmvc-ui`
     na versão compatível com a linha do Spring Boot 4.0.6 (confirmar na matriz de compatibilidade do
@@ -62,7 +62,7 @@ App B** (`integracao-app-b`).
     menos `@Operation` no `GET /demo/chamar-app-b` existente).
   - Cobre TC-7 (JWKS sem material privado) e TC-10 (`kid` estável após reinício).
 
-- [ ] **T3. Autenticação do cliente no Keycloak por Signed JWT (`private_key_jwt`)**
+- [x] **T3. Autenticação do cliente no Keycloak por Signed JWT (`private_key_jwt`)**
 
   - Precondição externa (fora do repositório): o cliente no realm do Keycloak deve estar configurado
     para autenticação Signed JWT com "Use JWKS URL" apontando para o endereço JWKS da App A e com o
@@ -77,7 +77,7 @@ App B** (`integracao-app-b`).
   - Cobre TC-1 (fluxo ponta a ponta por Signed JWT), TC-2 (ausência de segredo), TC-3 (grant/escopo
     preservados) e TC-11 (token reobtido em memória após reinício com a chave persistida).
 
-- [ ] **T4. Rotação da chave via endpoint POST com sobreposição corrente + anterior**
+- [x] **T4. Rotação da chave via endpoint POST com sobreposição corrente + anterior**
 
   - Estender o componente de chaves (T2) com a operação de rotação: gera um novo par, promove-o a
     corrente, mantém a chave anterior e passa a publicar ambas as chaves públicas no `JWKSet`
