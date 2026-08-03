@@ -1,0 +1,36 @@
+keytool -genkeypair -alias jwt-key -keyalg RSA -keysize 2048 -validity 365 -keystore keystore.jks -storepass changeit -keypass changeit -dname "CN=appa,O=dbfinanceira,C=com"
+
+
+keytool -exportcert -alias jwt-key -keystore keystore.jks -storepass changeit -rfc > certificate.pem
+
+
+
+keytool -exportkeystore -srckeystore keystore.jks -srcstorepass changeit -srcalias jwt-key-srckeypass changeit -destkeystore keystore.p12 -deststoretype PKCS12 -deststorepass changeit
+
+
+#keytool -exportcert -alias jwt-key -keystore keystore.jks -storepass changeit -rfc > certificate.pem
+--executar para gerar certificados
+openssl pkcs12 -in keystore.p12 -clcerts -nokeys -out certificado.crt
+openssl x509 -pubkey -noout -in certificado.crt > chave_publica_pkcs8.pem
+
+
+
+keytool -list -keystore keystore.jks -storepass changeit
+
+
+keytool -export -keystore keystore.jks -alias jwt-key -file chave_publica.cer -rfc
+
+
+
+
+
+
+
+#Gerar novo certificado para a aplicação
+keytool -genkeypair -alias novaAppA -keyalg RSA -keysize 2048 -validity 365 -keystore keystore.jks -storepass changeit -keypass changeit -dname "CN=appA,O=DB1,C=BR"
+
+#Exporta para PKCS12
+keytool -importkeystore -srckeystore keystore.jks -srcstorepass changeit -srcalias novaAppA -srckeypass changeit  -destkeystore keystore.p12 -deststoretype PKCS12 -deststorepass changeit
+
+#Exporta chave privada
+openssl pkcs12 -in keystore.p12 -nodes -out private_key.pem -passin pass:changeit
