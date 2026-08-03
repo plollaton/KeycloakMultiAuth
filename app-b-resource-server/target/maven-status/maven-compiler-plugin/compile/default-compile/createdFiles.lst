@@ -1,0 +1,6 @@
+com\dbfinanceira\appb\config\AppBSecurityProperties.class
+com\dbfinanceira\appb\web\SecureController.class
+com\dbfinanceira\appb\security\LocalFileJWKSource.class
+com\dbfinanceira\appb\config\JwtDecoderConfig.class
+com\dbfinanceira\appb\config\SecurityConfig.class
+com\dbfinanceira\appb\AppBResourceServerApplication.class

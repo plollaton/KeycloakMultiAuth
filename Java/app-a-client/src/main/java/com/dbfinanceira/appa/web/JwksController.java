@@ -4,6 +4,7 @@ package com.dbfinanceira.appa.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +26,12 @@ import java.util.Map;
 public class JwksController {
 
     private final KeyPair keyPair;
+    private final String alias;
 
-    public JwksController(KeyPair keyPair) {
+    public JwksController(KeyPair keyPair,
+                          @Value("${jwt.key.alias}") String alias) {
         this.keyPair = keyPair;
+        this.alias = alias;
     }
 
     @Operation(
@@ -42,9 +46,9 @@ public class JwksController {
             RSAPublicKey rsaKey = (RSAPublicKey) keyPair.getPublic();
 
             Map<String, Object> key = new HashMap<>();
-            key.put("kty", "RSA");
+            key.put("kty", rsaKey.getAlgorithm());
             key.put("use", "sig");
-            key.put("kid", "jwt-key");
+            key.put("kid", alias);
             key.put("n", Base64.getUrlEncoder().withoutPadding()
                     .encodeToString(rsaKey.getModulus().toByteArray()));
             key.put("e", Base64.getUrlEncoder().withoutPadding()

@@ -4,6 +4,8 @@ package com.dbfinanceira.appa.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +29,11 @@ public class DemoController {
                     + "chama GET /api/protegido da App B com o bearer anexado, repassando a resposta.")
     @ApiResponse(responseCode = "200", description = "Corpo repassado verbatim pela App B")
     @GetMapping("/demo/chamar-app-b")
-    public String chamarAppB() {
+    public String chamarAppB(@AuthenticationPrincipal Jwt jwt) {
+        System.out.println("✅ Token válido!");
+        System.out.println("Client ID: " + jwt.getClaimAsString("client_id"));
+        System.out.println("Scopes: " + jwt.getClaimAsStringList("scope"));
+        System.out.println("Roles: " + jwt.getClaimAsStringList("roles"));
         System.out.println("Chamada funcionou...");
         return "OK"; //appBClient.chamarEndpointProtegido();
     }

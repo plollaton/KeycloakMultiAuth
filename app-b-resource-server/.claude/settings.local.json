@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"D:\\\\Estudos\\\\keycloak\\\\app-b-resource-server\" && echo \"---.agents---\" && ls -la .agents 2>/dev/null || echo \"no .agents\" && echo \"---find README/scripts---\" && find . -iname \"readme*\" -o -iname \"*.sh\" 2>/dev/null | grep -v target && echo \"---parent dir---\" && ls .. && echo \"---clovis state---\" && cat .clovis/cli-state.json 2>/dev/null)",
+      "Bash(echo \"===SRC TREE===\" && find src -type f 2>/dev/null && echo \"===ENV FILES===\" && find . -maxdepth 2 -iname \"*.env*\" -o -maxdepth 2 -iname \"*.example\" -o -maxdepth 2 -iname \"*.sample\" 2>/dev/null && echo \"===PARENT===\" && ls -la .. 2>/dev/null)",
+      "Read(//d/Estudos/keycloak/**)",
+      "Bash(python -c \"import codecs; b=open\\(r'D:/Estudos/keycloak/app-b-resource-server/.agents/skills/autenticacao-token-jwt/SKILL.md','rb'\\).read\\(4\\); print\\('BOM' if b.startswith\\(codecs.BOM_UTF8\\) else 'no BOM', b[:4]\\)\")"
+    ]
+  }
+}

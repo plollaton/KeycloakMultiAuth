@@ -1,0 +1,54 @@
+{
+  "artifactLanguage": "pt",
+  "workMode": "maintenance",
+  "discoveryAnswers": {
+    "systemType": "Sistema backend usado em POC de autenticação com JWKS em requisições vindas com token criado pelo Keycloak. A autenticação deverá ser offline",
+    "scope": {
+      "type": "whole_project"
+    },
+    "restrictions": [
+      "presentar autenticação"
+    ]
+  },
+  "domainIndex": [
+    {
+      "name": "Gestão do JWKS local",
+      "slug": "gestao-jwks-local",
+      "dependsOn": [],
+      "order": 0,
+      "documented": true,
+      "specified": true
+    },
+    {
+      "name": "Autenticação e validação offline do token JWT",
+      "slug": "autenticacao-token-jwt",
+      "dependsOn": [
+        "gestao-jwks-local"
+      ],
+      "order": 1,
+      "documented": true,
+      "specified": true
+    },
+    {
+      "name": "Recurso protegido (API demonstrativa)",
+      "slug": "recurso-protegido",
+      "dependsOn": [
+        "autenticacao-token-jwt"
+      ],
+      "order": 2,
+      "documented": true,
+      "specified": true
+    }
+  ],
+  "technicalSkillIndex": [
+    {
+      "name": "Documentação de API (OpenAPI/Swagger)",
+      "slug": "documentacao-api-openapi",
+      "description": "Como manter e gerar a documentação OpenAPI/Swagger do App B com springdoc-openapi: adicionar a dependência, expor a UI Swagger e documentar os endpoints (/api/protegido e /actuator/health). Carregar ao criar, alterar ou documentar endpoints REST.",
+      "documented": true
+    }
+  ],
+  "authoritativeDocsSource": {
+    "kind": "skills"
+  }
+}

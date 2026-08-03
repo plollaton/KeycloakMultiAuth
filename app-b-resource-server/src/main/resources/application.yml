@@ -1,0 +1,31 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: app-b-resource-server
+
+app:
+  security:
+    jwt:
+      # deve ser IDENTICO ao "iss" que o Keycloak coloca no token
+      # (normalmente https://<host-keycloak>/realms/<realm>)
+      issuer: ${KEYCLOAK_ISSUER_URI:https://keycloak.example.com/realms/financeiro}
+      # "aud" esperado no token; exige um Audience Mapper configurado no client scope
+      # do Keycloak (ver README) - por padrao o Keycloak NAO inclui isso.
+      audience: ${APP_B_EXPECTED_AUDIENCE:app-b}
+      # pasta especifica onde o JWKS publico do Keycloak deve estar disponivel
+      # (ver scripts/sync-jwks.sh); o arquivo e recarregado automaticamente quando
+      # o "last modified time" mudar, sem precisar reiniciar a aplicacao.
+      jwks-path: ${APP_B_JWKS_PATH:/etc/app-b/jwks/jwks.json}
+      clock-skew-seconds: ${APP_B_CLOCK_SKEW_SECONDS:60}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+logging:
+  level:
+    org.springframework.security: INFO

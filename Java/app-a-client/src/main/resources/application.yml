@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
   address: 0.0.0.0
 
 spring:
@@ -30,7 +30,7 @@ jwt:
     location: 'classpath:keystore.jks'
     password: changeit
   key:
-    alias:  appa
+    alias:  novaAppA
     password: changeit
 
 #app:

@@ -1,0 +1,6 @@
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\AppBResourceServerApplication.java
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\config\AppBSecurityProperties.java
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\config\JwtDecoderConfig.java
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\config\SecurityConfig.java
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\security\LocalFileJWKSource.java
+D:\Estudos\keycloak\app-b-resource-server\src\main\java\com\dbfinanceira\appb\web\SecureController.java
