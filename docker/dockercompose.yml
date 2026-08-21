@@ -51,25 +51,28 @@ services:
       - "8080:8080"
     networks:
       - default_network
-  appa:
+  api-a:
     build:
-      context: ../Java/app-a-client
-      dockerfile: Dockerfile
-    container_name: certification-appa
+      context: ../Java/aplicacao-segura
+      dockerfile: Dockerfile-api
+    container_name: api-a
     ports:
-      - "8081:8081"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/certification
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
-    depends_on:
-      - postgres
+      - "8085:8080"
+    volumes:
+      - ../Java/aplicacao-segura/target:/app/target:ro
     networks:
       - default_network
-        #    volumes:
-        #- .:/app
-        #- /app/target
-
+  servico-b:
+    build:
+      context: ../Java/aplicacao-segura
+      dockerfile: Dockerfile-servico
+    container_name: servico-b
+    ports:
+      - "8086:8080"
+    volumes:
+      - ../Java/aplicacao-segura/target:/app/target:ro
+    networks:
+      - default_network
 
 networks:
   default_network:
