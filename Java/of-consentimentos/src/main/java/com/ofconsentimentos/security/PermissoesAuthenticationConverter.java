@@ -13,10 +13,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * Extrai, do claims set já decifrado por {@link JweTokenDecoder}, os papéis de realm
- * ({@code realm_access.roles}), os papéis de client/resource ({@code resource_access.*.roles}) e
- * os escopos ({@code scope}) do portador, combinando-os em uma única lista de autoridades. A
- * presença de qualquer item nessa lista já satisfaz a regra de autorização do domínio.
+ * Extrai, do claims set do token já validado pelo {@link org.springframework.security.oauth2.jwt.JwtDecoder}
+ * do resource server, os papéis de realm ({@code realm_access.roles}), os papéis de
+ * client/resource ({@code resource_access.*.roles}) e os escopos ({@code scope}) do portador,
+ * combinando-os em uma única lista de autoridades. A presença de qualquer item nessa lista já
+ * satisfaz a regra de autorização do domínio.
  */
 public class PermissoesAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 

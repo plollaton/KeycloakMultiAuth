@@ -38,13 +38,19 @@ conta própria. Do lado do Keycloak, a validação da assinatura do
 correspondente no endpoint de publicação daquele mesmo domínio — este domínio
 apenas consome esse contrato, não o expõe.
 
-Este domínio não expõe nenhum endpoint REST próprio: seu comportamento é
-inteiramente de saída (chamada ao Keycloak). A obtenção do `access_token` é a
-funcionalidade obrigatória deste domínio; usar esse `access_token` para chamar
-uma outra aplicação (por exemplo, uma api-b) é apenas o cenário de contexto que
-motiva o fluxo, e não uma funcionalidade obrigatória desta aplicação — o
-material de negócio não descreve, entre suas funcionalidades obrigatórias, a
-implementação dessa chamada subsequente.
+A obtenção do `access_token` é a funcionalidade obrigatória deste domínio; usar
+esse `access_token` para chamar uma outra aplicação (por exemplo, uma api-b) é
+apenas o cenário de contexto que motiva o fluxo, e não uma funcionalidade
+obrigatória desta aplicação — o material de negócio não descreve, entre suas
+funcionalidades obrigatórias, a implementação dessa chamada subsequente.
+
+Este domínio expõe um único endpoint REST, `GET /diagnostics/oauth2-client-assertion`,
+exclusivamente diagnóstico: aciona manualmente a montagem do `client_assertion` e a
+troca por `access_token` junto ao Keycloak, e responde confirmando o sucesso ou a
+falha dessa troca. Não é uma funcionalidade de negócio — existe apenas para permitir
+a validação manual do fluxo sem depender de um consumidor real do `access_token` — e
+nunca devolve o `access_token` obtido nem qualquer material da chave privada no corpo
+da resposta.
 
 ## Regras de negócio
 
@@ -148,9 +154,8 @@ resposta é definido pelo contrato do Keycloak, não por este domínio.
 - Cada `client_assertion` deve carregar um `jti` único; a estratégia concreta
   de geração desse identificador não é fixada pelo material de negócio
   disponível.
-- Este domínio não expõe nenhum endpoint REST próprio e, portanto, não integra
-  a documentação OpenAPI/Swagger do projeto — a documentação OpenAPI/Swagger do
-  projeto cobre apenas endpoints expostos pela própria aplicação.
+- O endpoint `GET /diagnostics/oauth2-client-assertion` integra a documentação
+  OpenAPI/Swagger do projeto, como os demais endpoints expostos pela aplicação.
 - A chamada subsequente ao `access_token` obtido, para consumir uma outra
   aplicação como resource server, é informação de cenário/contexto; o material
   de negócio não fixa qual API é chamada nem o contrato dessa chamada — isso

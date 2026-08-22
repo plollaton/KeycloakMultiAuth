@@ -26,7 +26,7 @@
       ],
       "order": 1,
       "documented": true,
-      "specified": false
+      "specified": true
     },
     {
       "name": "Servidor de Recursos OAuth2",
@@ -36,7 +36,7 @@
       ],
       "order": 2,
       "documented": true,
-      "specified": false
+      "specified": true
     }
   ],
   "technicalSkillIndex": [
@@ -55,6 +55,10 @@
     {
       "slug": "001-gestao-chaves-rsa-jwks",
       "closedAt": "2026-08-21T20:15:05.297Z"
+    },
+    {
+      "slug": "002-cliente-oauth2-client-assertion",
+      "closedAt": "2026-08-22T12:20:50.246Z"
     }
   ]
 }

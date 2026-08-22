@@ -7,9 +7,9 @@ qualquer tarefa.
 
 Prova de conceito de **autenticação e autorização** de requisições destinadas à "aplicação de moto
 offline". Cada requisição chega com um header `Bearer` emitido por um servidor **Keycloak**
-associado a um certificado. A aplicação guarda a **chave privada** localmente, usa-a para
-**descriptografar** o token (JWE) e, após decifrar, valida as **permissões** do portador antes de
-liberar o acesso.
+associado a um certificado. A aplicação guarda a **chave privada** localmente, deriva dela a
+**chave pública** e a usa para **verificar a assinatura** do token e, após a verificação, valida
+as **permissões** do portador antes de liberar o acesso.
 
 O objetivo é **provar a ideia da autenticação**, não entregar funcionalidade de negócio. A
 superfície funcional é mínima: um único domínio exercitado por um endpoint no estilo "hello world"
@@ -19,18 +19,20 @@ que serve de recurso protegido para demonstrar o fluxo.
 
 Domínio único: **Validação de Autenticação e Permissões** (`validacao-autenticacao-permissoes`).
 Toda requisição ao recurso protegido exige um token `Bearer`; ausência, invalidez ou falha na
-descriptografia (JWE) do token resultam em acesso negado. Após decifrar o token com a chave privada
-local, a autorização considera as permissões (papéis/escopos) do portador.
+verificação da assinatura do token resultam em acesso negado. Após verificar a assinatura do token
+com a chave pública derivada da chave privada local, a autorização considera as permissões
+(papéis/escopos) do portador.
 
 ## Stack
 
 - **Java 21**
 - **Spring Boot**
 - **Spring Security** como resource server — intercepta as requisições, extrai o header `Bearer` e
-  aplica a descriptografia/autorização em cada endpoint.
-- **Keycloak** — emissor dos tokens `Bearer` cifrados (JWE); origem da identidade e das permissões.
-- **Chave privada + certificado** — material criptográfico que a aplicação guarda para descriptografar
-  o token JWE.
+  aplica a verificação de assinatura/autorização em cada endpoint.
+- **Keycloak** — emissor dos tokens `Bearer` assinados (JWT, RS256); origem da identidade e das
+  permissões.
+- **Chave privada + certificado** — material criptográfico que a aplicação guarda; a chave privada
+  alimenta a derivação da chave pública usada para verificar a assinatura do token.
 - **Maven** com **Maven Wrapper** (`./mvnw`) como ferramenta de build.
 
 ## Estrutura do repositório

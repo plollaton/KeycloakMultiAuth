@@ -2,9 +2,10 @@ server:
   port: ${SERVER_PORT:8089}
 app:
   security:
-    jwe:
-      # Caminho do arquivo PEM (PKCS8) com a chave privada local usada para descriptografar o
-      # token Bearer (JWE). Aceita os prefixos "classpath:" ou "file:". O arquivo vive em
-      # src/main/resources/private-key.pem, não é versionado no repositório (ver AGENTS.md) e
-      # é resolvido via classpath tanto em execução local quanto a partir do jar empacotado.
-      private-key-location: ${JWE_PRIVATE_KEY_LOCATION:classpath:private-key.pem}
+    jwt:
+      # Caminho do arquivo PEM (PKCS8) com a chave privada local da qual a aplicação deriva a
+      # chave pública usada para verificar a assinatura do token Bearer. Aceita os prefixos
+      # "classpath:" ou "file:". O arquivo vive em src/main/resources/private-key.pem, não é
+      # versionado no repositório (ver AGENTS.md) e é resolvido via classpath tanto em execução
+      # local quanto a partir do jar empacotado.
+      private-key-location: ${JWT_PRIVATE_KEY_LOCATION:classpath:private-key.pem}

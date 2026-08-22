@@ -29,7 +29,12 @@ preceded by a stable identifier assigned when the spec was generated:
 
 ```markdown
 - [ ] **T3. REST endpoints and contracts**
+  - Depends on: T2
 ```
+
+The `Depends on` line names the tasks of this same unit that need to be ready
+before this one (`none` when there are none); what blocks from outside the unit
+appears as a precondition. Use it to sequence the batch you received.
 
 Locate each task in the batch by the identifiers you received (e.g., `T3`, `T5`).
 Mark `- [ ]` → `- [x]` for each one only when its implementation is actually
@@ -92,6 +97,26 @@ to **other** domains. Respect them:
   wrong. If it is blocking, escalate as a question.
 - Dependencies on another domain are preconditions (already delivered) or blockers
   (to escalate) — never work to do within this task.
+
+## Comments and documentation you write
+
+A comment describes the code as it stands, for whoever opens the file later without having
+seen the previous version nor this session. While implementing you hold the before and the
+after in your head, and that is exactly what leaks into the file: **do not comment the**
+**edit**. A comment that explains what the code stopped doing, or why the earlier approach
+was dropped, belongs to the commit message and to the report of this round.
+
+Negation follows the same criterion: it earns its place when a reader would plausibly try
+the alternative and the comment says why it fails, guarding a future change (e.g., "the full
+value goes to the DOM because the snapshot test matches the exact text"). A negation that
+only contrasts with the previous version, with an alternative nobody would try, or with what
+the code already shows, is noise.
+
+The same applies to any documentation the task updates (the domain authoritative
+documentation, a README): rewrite the affected passage from the final state, as if it had
+always read that way. Before closing the task, re-read the comments and texts you wrote and
+cut what fails these rules — "no longer", "used to", "is now", "instead of" and "unlike" are
+the usual symptoms.
 
 ## Quality checks before closing
 
@@ -321,6 +346,8 @@ two, prefer to escalate as a decision.
 - Creating a file, asset or catalog that no code in this task references.
 - Keeping two concurrent implementations of the same data source with one of them dead.
 - Changing dead code blindly instead of escalating the decision to the human.
+- Leaving a comment that narrates your edit ("this value is no longer used here") instead of
+  describing the code as it stands.
 
 ## Maintaining this skill
 
