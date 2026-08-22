@@ -1,0 +1,60 @@
+{
+  "artifactLanguage": "pt",
+  "workMode": "maintenance",
+  "discoveryAnswers": {
+    "systemType": "POC de backend JAVA para validar autenticação",
+    "scope": {
+      "type": "whole_project"
+    },
+    "businessInput": "./descritivo.md",
+    "restrictions": []
+  },
+  "domainIndex": [
+    {
+      "name": "Gestão de Chaves RSA e Publicação JWKS",
+      "slug": "gestao-chaves-rsa-jwks",
+      "dependsOn": [],
+      "order": 0,
+      "documented": true,
+      "specified": true
+    },
+    {
+      "name": "Cliente OAuth2 com Client Assertion JWT",
+      "slug": "cliente-oauth2-client-assertion",
+      "dependsOn": [
+        "gestao-chaves-rsa-jwks"
+      ],
+      "order": 1,
+      "documented": true,
+      "specified": false
+    },
+    {
+      "name": "Servidor de Recursos OAuth2",
+      "slug": "servidor-recursos-oauth2",
+      "dependsOn": [
+        "gestao-chaves-rsa-jwks"
+      ],
+      "order": 2,
+      "documented": true,
+      "specified": false
+    }
+  ],
+  "technicalSkillIndex": [
+    {
+      "name": "Documentação de API com OpenAPI/Swagger",
+      "slug": "documentacao-api-openapi",
+      "description": "Convenção para documentar os endpoints REST do projeto (GET /oauth2/jwks, GET /api/public, GET /api/protected) via OpenAPI/Swagger; carregar ao criar ou alterar qualquer endpoint REST exposto pela aplicação.",
+      "documented": true
+    }
+  ],
+  "authoritativeDocsSource": {
+    "kind": "skills"
+  },
+  "originalWorkMode": "greenfield",
+  "implementedSpecs": [
+    {
+      "slug": "001-gestao-chaves-rsa-jwks",
+      "closedAt": "2026-08-21T20:15:05.297Z"
+    }
+  ]
+}
