@@ -98,7 +98,7 @@ app.get('/jwt-pagamentos', (req, res) => {
         // CONFIGURAÇÃO
         // =====================================================
 
-        const PRIVATE_KEY_PATH = './api-a-private.pem';
+        const PRIVATE_KEY_PATH = './servico-a-private.pem';
 
         // Validar arquivo
         if (!fs.existsSync(PRIVATE_KEY_PATH)) {
@@ -111,9 +111,9 @@ app.get('/jwt-pagamentos', (req, res) => {
         const exp = now + 60;
 
         const payload = {
-            "jti": `pgto-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-            "iss": "api-a",
-            "sub": "api-a",
+            "jti": `seervico-a-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+            "iss": "servico-a",
+            "sub": "servico-a",
             "aud": "http://localhost:8080/realms/master",
             "iat": now,
             "exp": exp

@@ -1,4 +1,0 @@
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-EXPOSE 8086
-ENTRYPOINT ["sh", "-c", "exec java -jar /app/target/*.jar --port 8086"]
