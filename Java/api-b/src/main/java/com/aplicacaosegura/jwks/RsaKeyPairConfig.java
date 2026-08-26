@@ -1,5 +1,8 @@
 package com.aplicacaosegura.jwks;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.RSAKey;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -9,15 +12,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.KeyUse;
-import com.nimbusds.jose.jwk.RSAKey;
 
 /**
  * Mantém o par de chaves RSA ativo da aplicação, carregado na inicialização do par fixo de
@@ -28,8 +26,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 @Configuration
 public class RsaKeyPairConfig {
 
-    private static final String PRIVATE_KEY_RESOURCE = "servico-a.pem";
-    private static final String CERTIFICATE_RESOURCE = "servico-a-cert.pem";
+    private static final String PRIVATE_KEY_RESOURCE = "api-b.pem";
+    private static final String CERTIFICATE_RESOURCE = "api-b-cert.pem";
 
     @Bean
     RSAKey activeRsaKey() throws Exception {

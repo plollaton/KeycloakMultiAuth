@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8081
 
 
 spring:
@@ -12,7 +12,7 @@ spring:
       client:
         registration:
           keycloak:
-            client-id: servico-a
+            client-id: api-a
             authorization-grant-type: client_credentials
             client-authentication-method: private_key_jwt
         provider:

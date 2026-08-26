@@ -1,0 +1,4 @@
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+EXPOSE 8085
+ENTRYPOINT ["sh", "-c", "exec java -jar /app/target/*.jar --port 8085 --app.cross.external-base-url=http://172.21.0.5:8080"]

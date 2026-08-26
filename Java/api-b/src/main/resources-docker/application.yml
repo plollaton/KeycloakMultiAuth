@@ -1,10 +1,8 @@
 server:
-  port: 8090
-
-
+  port: 8080
 spring:
   profiles:
-    active: dev
+    active: docker
   application:
     name: aplicacao-segura
   security:
@@ -12,29 +10,20 @@ spring:
       client:
         registration:
           keycloak:
-            client-id: servico-a
+            client-id: api-a
             authorization-grant-type: client_credentials
             client-authentication-method: private_key_jwt
         provider:
           keycloak:
-            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
+            token-uri: http://keycloak:8080/realms/master/protocol/openid-connect/token
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/master
+          issuer-uri: http://keycloak:8080/realms/master
 
 app:
   security:
     resource-server:
-      expected-audience: api-b
-
+      expected-audience: http://keycloak:8080/realms/master
 logging:
   level:
     root: info
-    com:
-      aplicacaosegura:
-        resourceserver:
-          cross: debug
-    jakarta:
-      servlet:
-        http:
-          HttpServlet: debug
