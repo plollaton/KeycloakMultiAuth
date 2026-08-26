@@ -1,0 +1,40 @@
+server:
+  port: 8090
+
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: aplicacao-segura
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: servico-b
+            authorization-grant-type: client_credentials
+            client-authentication-method: private_key_jwt
+        provider:
+          keycloak:
+            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/master
+
+app:
+  security:
+    resource-server:
+      expected-audience: api-b
+
+logging:
+  level:
+    root: info
+    com:
+      aplicacaosegura:
+        resourceserver:
+          cross: debug
+    jakarta:
+      servlet:
+        http:
+          HttpServlet: debug
