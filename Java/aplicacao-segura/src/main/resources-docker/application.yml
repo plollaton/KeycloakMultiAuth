@@ -1,0 +1,29 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: docker
+  application:
+    name: aplicacao-segura
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: of-pagamentos
+            authorization-grant-type: client_credentials
+            client-authentication-method: private_key_jwt
+        provider:
+          keycloak:
+            token-uri: http://keycloak:8080/realms/master
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/master
+
+app:
+  security:
+    resource-server:
+      expected-audience: http://keycloak:8080/realms/master
+logging:
+  level:
+    root: info

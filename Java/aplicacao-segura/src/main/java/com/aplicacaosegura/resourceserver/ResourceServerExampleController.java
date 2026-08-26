@@ -37,4 +37,5 @@ public class ResourceServerExampleController {
     public AccessClassificationResponse publicEndpoint() {
         return new AccessClassificationResponse("publico");
     }
+
 }

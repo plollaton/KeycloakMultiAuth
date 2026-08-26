@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.endpoint.NimbusJwtClientAuthenticationParametersConverter;
+import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest;
 import org.springframework.security.oauth2.client.endpoint.RestClientClientCredentialsTokenResponseClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
  * Configura a obtenção de um {@code access_token} junto ao Keycloak via {@code client_credentials},
  * autenticando esta aplicação com um {@code client_assertion} JWT (RFC 7523) assinado com a chave
  * RSA ativa publicada pelo domínio "Gestão de Chaves RSA e Publicação JWKS" ({@code RsaKeyPairConfig}).
+ * O header do {@code client_assertion} inclui explicitamente {@code "typ": "JWT"}.
  */
 @Configuration
 public class OAuth2ClientAssertionConfig {
@@ -30,10 +32,14 @@ public class OAuth2ClientAssertionConfig {
             RSAKey activeRsaKey) {
 
         Function<ClientRegistration, JWK> jwkResolver = clientRegistration -> activeRsaKey;
+        NimbusJwtClientAuthenticationParametersConverter<OAuth2ClientCredentialsGrantRequest> jwtClientAssertionConverter =
+                new NimbusJwtClientAuthenticationParametersConverter<>(jwkResolver);
+        jwtClientAssertionConverter.setJwtClientAssertionCustomizer(
+                context -> context.getHeaders().type("JWT"));
+
         RestClientClientCredentialsTokenResponseClient tokenResponseClient =
                 new RestClientClientCredentialsTokenResponseClient();
-        tokenResponseClient.addParametersConverter(
-                new NimbusJwtClientAuthenticationParametersConverter<>(jwkResolver));
+        tokenResponseClient.addParametersConverter(jwtClientAssertionConverter);
 
         OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
                 .clientCredentials(builder -> builder.accessTokenResponseClient(tokenResponseClient))

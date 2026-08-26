@@ -3,6 +3,8 @@ server:
 
 
 spring:
+  profiles:
+    active: dev
   application:
     name: aplicacao-segura
   security:
@@ -26,4 +28,4 @@ app:
       expected-audience: http://localhost:8080/realms/master
 logging:
   level:
-    root: debug
+    root: info
