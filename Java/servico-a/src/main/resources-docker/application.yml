@@ -4,13 +4,13 @@ spring:
   profiles:
     active: docker
   application:
-    name: aplicacao-segura
+    name: servico-a
   security:
     oauth2:
       client:
         registration:
           keycloak:
-            client-id: servico-b
+            client-id: servico-a
             authorization-grant-type: client_credentials
             client-authentication-method: private_key_jwt
         provider:
@@ -23,7 +23,8 @@ spring:
 app:
   security:
     resource-server:
-      expected-audience: http://keycloak:8080/realms/master
+      expected-audience: api-b
+
 logging:
   level:
     root: info

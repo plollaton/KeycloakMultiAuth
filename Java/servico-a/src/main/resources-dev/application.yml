@@ -6,7 +6,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: aplicacao-segura
+    name: servico-a
   security:
     oauth2:
       client:
@@ -38,3 +38,8 @@ logging:
       servlet:
         http:
           HttpServlet: debug
+    org:
+      springframework:
+        security:
+          oauth2:
+            client: debug

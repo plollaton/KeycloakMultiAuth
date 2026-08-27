@@ -98,7 +98,7 @@ app.get('/jwt-pagamentos', (req, res) => {
         // CONFIGURAÇÃO
         // =====================================================
 
-        const PRIVATE_KEY_PATH = './servico-a-private.pem';
+        const PRIVATE_KEY_PATH = './servico-a.pem';
 
         // Validar arquivo
         if (!fs.existsSync(PRIVATE_KEY_PATH)) {

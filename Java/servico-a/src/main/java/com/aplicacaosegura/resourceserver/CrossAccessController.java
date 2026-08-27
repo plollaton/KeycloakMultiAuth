@@ -62,11 +62,14 @@ public class CrossAccessController {
             }
 
             OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
-            crossAccessRestClient.get()
+            ResponseEntity response = crossAccessRestClient.get()
                     .uri("/api/protected")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue())
                     .retrieve()
                     .toBodilessEntity();
+            if (response.getStatusCode().isError()){
+                return ResponseEntity.notFound().build();
+            }
 
             return ResponseEntity.ok(new CrossAccessResponse("ok"));
         } catch (OAuth2AuthorizationException | RestClientException ex) {

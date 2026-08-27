@@ -67,6 +67,10 @@
     {
       "slug": "004-gestao-chaves-rsa-jwks-perfis-build-dev-docker",
       "closedAt": "2026-08-25T15:34:19.425Z"
+    },
+    {
+      "slug": "005-servidor-recursos-oauth2-cross-chamada-api-externa",
+      "closedAt": "2026-08-26T18:41:31.704Z"
     }
   ]
 }

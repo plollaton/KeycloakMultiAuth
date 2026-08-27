@@ -23,7 +23,8 @@ spring:
 app:
   security:
     resource-server:
-      expected-audience: http://keycloak:8080/realms/master
+      expected-audience: api-b
+
 logging:
   level:
     root: info

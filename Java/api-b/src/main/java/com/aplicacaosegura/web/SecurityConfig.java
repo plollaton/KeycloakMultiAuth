@@ -20,7 +20,6 @@ public class SecurityConfig {
                         "/oauth2/jwks",
                         "/diagnostics/oauth2-client-assertion",
                         "/api/public",
-                        "/api/cross",
                         "/actuator/health",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
