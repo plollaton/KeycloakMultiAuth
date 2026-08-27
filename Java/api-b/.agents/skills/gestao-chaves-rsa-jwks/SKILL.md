@@ -27,17 +27,15 @@ metadata:
 Este domínio garante que a aplicação tenha, em todo momento, um par de chaves RSA
 próprio e que a chave pública correspondente esteja disponível publicamente no
 formato JWK Set, para que o Keycloak (ou qualquer outro consumidor externo) possa
-validar assinaturas produzidas com a chave privada da aplicação — em particular a
-assinatura do client_assertion enviado ao autenticar-se no Keycloak.
+validar assinaturas produzidas com a chave privada da aplicação.
 
 A aplicação faz parte de um cenário com múltiplas aplicações (por exemplo
 servico-a, api-b), cada uma responsável por manter seu próprio par de chaves e
 publicar seu próprio JWKS; este domínio cobre apenas o par de chaves e o JWKS
-desta aplicação, não os de outras aplicações do cenário. O consumo da chave
-privada para assinar o client_assertion pertence ao domínio do cliente OAuth2 com
-client_assertion, e a definição de quais endpoints exigem autenticação pertence ao
-domínio do servidor de recursos OAuth2; este domínio apenas garante que seu
-próprio endpoint de publicação da chave pública seja público.
+desta aplicação, não os de outras aplicações do cenário. A definição de quais
+endpoints exigem autenticação pertence ao domínio do servidor de recursos
+OAuth2; este domínio apenas garante que seu próprio endpoint de publicação da
+chave pública seja público.
 
 ## Regras de negócio
 
@@ -50,8 +48,8 @@ próprio endpoint de publicação da chave pública seja público.
    série do certificado `api-a-cert.pem`. Esse identificador acompanha a chave
    pública publicada e permite ao consumidor (Keycloak) diferenciar chaves ao
    longo do tempo — é a base do suporte à rotação de chaves.
-3. A chave privada nunca é exposta pela aplicação: é usada apenas internamente,
-   pelo domínio que assina o client_assertion.
+3. A chave privada nunca é exposta pela aplicação: é mantida apenas
+   internamente.
 4. O par de chaves ativo é sempre o par fixo mantido pelos arquivos
    `api-a-private.pem` e `api-a-cert.pem`, incluídos nos recursos da
    aplicação; não há geração de um par de chaves aleatório nem outra fonte
@@ -128,10 +126,10 @@ aplicações do cenário nem chaves de rotações anteriores.
 ## Integrações e dependências externas
 
 - **Keycloak**: consumidor externo do endpoint de publicação da chave pública;
-  usa a chave pública publicada para validar a assinatura do client_assertion
-  (produzido pelo domínio do cliente OAuth2) e, dependendo do cenário, de
-  access_tokens emitidos com essa chave. Este domínio não implementa nenhuma
-  chamada ao Keycloak — apenas expõe o contrato que o Keycloak consulta.
+  dependendo do cenário, pode usar a chave pública publicada para validar
+  assinaturas produzidas com a chave privada da aplicação. Este domínio não
+  implementa nenhuma chamada ao Keycloak — apenas expõe o contrato que o
+  Keycloak consulta.
 - **Nimbus JOSE+JWT**: biblioteca usada para montar o par de chaves RSA e
   serializar a chave pública ativa no formato JWK Set exigido pelo contrato do
   endpoint.

@@ -5,8 +5,7 @@
 **Contexto.** Este domínio cria o scaffold Maven do projeto (nenhum `pom.xml` existe ainda). O
 `AGENTS.md` fixa a stack completa do projeto inteiro — incluindo `spring-boot-starter-oauth2-client`
 e `spring-boot-starter-oauth2-resource-server` —, mas esses dois starters só são configurados
-(client registration, issuer/jwk-set-uri) pelos domínios "Cliente OAuth2 com Client Assertion JWT"
-e "Servidor de Recursos OAuth2", que ainda não existem.
+(client registration, issuer/jwk-set-uri) pelo domínio "Servidor de Recursos OAuth2", que ainda não existe.
 
 **Alternativas:**
 
@@ -28,10 +27,10 @@ ressalva em `AGENTS.md`; a decisão registrada aqui é apenas de sequenciamento 
 entra no `pom.xml`), atribuição que o `plan-authoring` reserva a este arquivo.
 
 **Consequências:** o `pom.xml` desta unidade não inclui starters que nenhuma classe desta unidade
-usa; os domínios "Cliente OAuth2" e "Servidor de Recursos OAuth2" adicionam
-`spring-boot-starter-oauth2-client`/`-resource-server`, respectivamente, em seus próprios planos,
-quando cada um precisar configurá-los — nesse momento a dependência direta em
-`nimbus-jose-jwt` pode ser reavaliada (os starters passam a trazer o Nimbus transitivamente).
+usa; o domínio "Servidor de Recursos OAuth2" adiciona
+`spring-boot-starter-oauth2-resource-server` em seu próprio plano,
+quando precisar configurá-lo — nesse momento a dependência direta em
+`nimbus-jose-jwt` pode ser reavaliada (o starter passa a trazer o Nimbus transitivamente).
 
 ## Estrutura de pacotes
 
@@ -44,19 +43,18 @@ Nenhum padrão arquitetural (hexagonal, camadas, etc.) é mencionado em nenhum a
 - **Pacote por camada técnica** (`controller`, `service`, `config`) — comum em POCs pequenas, mas
   espalha as poucas classes de cada domínio entre pacotes que crescem de forma desbalanceada à
   medida que os domínios 2 e 3 forem adicionados.
-- **Pacote por domínio de negócio** (`jwks`, `oauth2client`, `resourceserver`, mais um pacote
-  `web` para a classe de aplicação e configuração REST/OpenAPI compartilhada) — espelha os três
+- **Pacote por domínio de negócio** (`jwks`, `resourceserver`, mais um pacote
+  `web` para a classe de aplicação e configuração REST/OpenAPI compartilhada) — espelha os
   domínios já identificados em `functional-map.md`, mantendo cada domínio autocontido.
 
 **Decisão:** pacote por domínio de negócio, sem camada arquitetural adicional.
 
 **Confirmação:** decisão de estrutura, não de tecnologia/biblioteca — cai fora da exigência de
 base firme do `plan-authoring`, mas é registrada aqui pela relevância para as tasks futuras
-(inclusive dos domínios 2 e 3, que devem seguir o mesmo padrão).
+(inclusive do domínio "Servidor de Recursos OAuth2", que deve seguir o mesmo padrão).
 
-**Consequências:** os domínios "Cliente OAuth2" e "Servidor de Recursos OAuth2" recebem,
-respectivamente, os pacotes `com.aplicacaosegura.oauth2client` e
-`com.aplicacaosegura.resourceserver` quando forem implementados, mantendo a mesma convenção.
+**Consequências:** o domínio "Servidor de Recursos OAuth2" recebe o pacote
+`com.aplicacaosegura.resourceserver` quando for implementado, mantendo a mesma convenção.
 
 ## Postura padrão da SecurityFilterChain
 

@@ -15,9 +15,8 @@ ativa do artefato empacotado, eliminando a necessidade de definir manualmente a 
 
 Esta unidade estende o scaffold Maven (`pom.xml`) que o domínio já mantém como infraestrutura
 transversal desde sua primeira materialização (spec `001-gestao-chaves-rsa-jwks`). O conteúdo
-funcional selecionado por cada perfil (URLs de client OAuth2 e de resource server) pertence aos
-domínios "Cliente OAuth2 com Client Assertion JWT (RFC 7523)" e "Servidor de Recursos OAuth2
-(Validação de Access Token)" — ver "Cross-domain dependencies".
+funcional selecionado por cada perfil (URL de resource server) pertence ao domínio "Servidor de
+Recursos OAuth2 (Validação de Access Token)" — ver "Cross-domain dependencies".
 
 ## Current code state
 
@@ -74,11 +73,9 @@ domínios "Cliente OAuth2 com Client Assertion JWT (RFC 7523)" e "Servidor de Re
 
 **Belongs to other domains (cross-domain, does not become a task here):**
 
-- Valores de `token-uri`/`client-id`/`authorization-grant-type` em
-  `spring.security.oauth2.client` → domínio "Cliente OAuth2 com Client Assertion JWT (RFC
-  7523)"; esta unidade não altera esses valores, apenas qual arquivo os fornece.
 - Valores de `issuer-uri` e `app.security.resource-server.expected-audience` → domínio "Servidor
-  de Recursos OAuth2 (Validação de Access Token)"; mesma ressalva.
+  de Recursos OAuth2 (Validação de Access Token)"; esta unidade não altera esses valores, apenas
+  qual arquivo os fornece.
 - Orquestração dos contêineres (`docker/dockercompose.yml`, `Dockerfile-api`,
   `Dockerfile-servico`) — infraestrutura de deployment fora de qualquer domínio de negócio desta
   POC.
@@ -138,12 +135,10 @@ Compilar com `-P docker` produz um artefato que, ao subir, já usa os valores de
 
 ## Cross-domain dependencies
 
-- **"Cliente OAuth2 com Client Assertion JWT (RFC 7523)"** — os valores de `token-uri` e demais
-  atributos de `spring.security.oauth2.client` selecionados por esta unidade são consumidos por
-  esse domínio; esta spec não altera esses valores, apenas qual arquivo os fornece no artefato
-  final.
-- **"Servidor de Recursos OAuth2 (Validação de Access Token)"** — mesma relação para
-  `issuer-uri` e `app.security.resource-server.expected-audience`.
+- **"Servidor de Recursos OAuth2 (Validação de Access Token)"** — os valores de `issuer-uri` e
+  `app.security.resource-server.expected-audience` selecionados por esta unidade são consumidos
+  por esse domínio; esta spec não altera esses valores, apenas qual arquivo os fornece no
+  artefato final.
 - **`docker/dockercompose.yml`** — depende de o artefato em `target/` (montado como volume) ter
   sido compilado com o perfil `docker` para que `api-a` alcance o Keycloak do cenário; essa
   escolha de perfil no comando de build é operacional, fora do escopo desta spec.

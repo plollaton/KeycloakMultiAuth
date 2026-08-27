@@ -11,7 +11,7 @@ Proteção dos endpoints HTTP desta aplicação atuando como OAuth2 Resource Ser
 
 ## Estado atual do código
 
-O `pom.xml` não contém `spring-boot-starter-oauth2-resource-server` nem `spring-boot-starter-actuator`. O `SecurityConfig` (`src/main/java/com/aplicacaosegura/web/SecurityConfig.java`) define a única `SecurityFilterChain` da aplicação, hoje limitada a liberar como públicos `GET /oauth2/jwks`, `GET /diagnostics/oauth2-client-assertion` e os caminhos do Swagger/OpenAPI, exigindo autenticação para qualquer outra requisição (`anyRequest().authenticated()`) sem nenhum mecanismo de autenticação configurado — nenhuma requisição a um endpoint fora da lista de liberados pode ser atendida com sucesso hoje. Não existem os endpoints `GET /api/protected`, `GET /api/public` nem `GET /actuator/health`, e a aplicação não valida JWTs em nenhum momento. Este domínio ainda não tem nenhuma parte implementada.
+O `pom.xml` não contém `spring-boot-starter-oauth2-resource-server` nem `spring-boot-starter-actuator`. O `SecurityConfig` (`src/main/java/com/aplicacaosegura/web/SecurityConfig.java`) define a única `SecurityFilterChain` da aplicação, hoje limitada a liberar como públicos `GET /oauth2/jwks` e os caminhos do Swagger/OpenAPI, exigindo autenticação para qualquer outra requisição (`anyRequest().authenticated()`) sem nenhum mecanismo de autenticação configurado — nenhuma requisição a um endpoint fora da lista de liberados pode ser atendida com sucesso hoje. Não existem os endpoints `GET /api/protected`, `GET /api/public` nem `GET /actuator/health`, e a aplicação não valida JWTs em nenhum momento. Este domínio ainda não tem nenhuma parte implementada.
 
 ## Scope
 
@@ -26,7 +26,6 @@ O `pom.xml` não contém `spring-boot-starter-oauth2-resource-server` nem `sprin
 **Out:**
 
 - Geração, rotação e publicação do par de chaves RSA e do JWKS próprio da aplicação — domínio "Gestão de Chaves RSA e Publicação JWKS".
-- Obtenção de `access_token` por esta aplicação para chamar outras aplicações — domínio "Cliente OAuth2 com Client Assertion JWT".
 - Validação de `access_tokens` feita por outras aplicações do cenário (ex.: api-b atuando como seu próprio resource server).
 - Qualquer lógica de negócio específica dentro dos endpoints de exemplo além de confirmar se a requisição foi autenticada — o material de negócio fixa apenas a classificação de acesso, não um contrato de resposta.
 
@@ -45,7 +44,6 @@ O `pom.xml` não contém `spring-boot-starter-oauth2-resource-server` nem `sprin
 **Belongs to other domains (cross-domain, does not become a task here):**
 
 - Geração, rotação e publicação do par de chaves RSA e de `GET /oauth2/jwks` → domínio "Gestão de Chaves RSA e Publicação JWKS"; este domínio apenas preserva a liberação pública já existente desse endpoint na `SecurityFilterChain`.
-- Montagem do `client_assertion` e obtenção de `access_token` por esta aplicação → domínio "Cliente OAuth2 com Client Assertion JWT"; a liberação pública de `GET /diagnostics/oauth2-client-assertion`, já existente na `SecurityFilterChain`, é preservada.
 - Emissão de `access_tokens` e publicação do JWKS do emissor → responsabilidade do Keycloak, sistema externo.
 
 ## User stories
@@ -78,12 +76,11 @@ O `pom.xml` não contém `spring-boot-starter-oauth2-resource-server` nem `sprin
 ## Cross-domain dependencies
 
 - **"Gestão de Chaves RSA e Publicação JWKS"** — mantém `GET /oauth2/jwks` público na mesma `SecurityFilterChain` que este domínio configura; este domínio preserva essa liberação sem alterá-la.
-- **"Cliente OAuth2 com Client Assertion JWT"** — mantém `GET /diagnostics/oauth2-client-assertion` público na mesma `SecurityFilterChain`; este domínio preserva essa liberação sem alterá-la.
 - **Keycloak** (sistema externo) — publica o JWK Set consultado para validar a assinatura dos `access_tokens` recebidos, e é a fonte dos valores de `iss` e `aud` esperados pelo ambiente.
 
 ## Risks and observations
 
 - Esta POC não implementa testes automatizados (unitários, integração ou e2e); a verificação deste fluxo depende de um `access_token` real emitido por um Keycloak configurado para o ambiente.
-- Os valores concretos de `iss` e `aud` esperados são específicos do ambiente de implantação e não são fixados pelo material de negócio (regra 6 da skill do domínio); a implementação os trata como configuráveis, sem fixar valores — mesmo tratamento já dado a `client_id`/`aud` no domínio "Cliente OAuth2 com Client Assertion JWT".
+- Os valores concretos de `iss` e `aud` esperados são específicos do ambiente de implantação e não são fixados pelo material de negócio (regra 6 da skill do domínio); a implementação os trata como configuráveis, sem fixar valores.
 - `GET /api/protected` e `GET /api/public` são endpoints de exemplo: o material de negócio fixa apenas sua classificação de acesso, não um contrato de corpo de resposta; a implementação é livre para definir um corpo mínimo que apenas evidencie a classificação (protegido/público).
 - Este domínio é o dono da `SecurityFilterChain` única da aplicação; qualquer alteração futura em outro domínio que precise liberar ou proteger um novo caminho passa por este mesmo arquivo (`SecurityConfig`).

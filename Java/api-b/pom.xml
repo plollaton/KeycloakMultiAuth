@@ -16,7 +16,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>aplicacao-segura</name>
-    <description>POC de autenticacao OAuth2 (client_assertion RFC 7523) com Keycloak</description>
+    <description>POC de servidor de recursos OAuth2 com Keycloak (validacao de access token e publicacao de JWKS propria)</description>
 
     <properties>
         <java.version>21</java.version>
@@ -32,10 +32,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

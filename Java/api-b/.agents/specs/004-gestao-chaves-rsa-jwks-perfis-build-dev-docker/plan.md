@@ -52,14 +52,19 @@ unidade é manual, por build:
 
 - **Perfil `dev` (padrão)**: `mvn clean package` sem `-P`; inspecionar
   `target/classes/application.yml` e confirmar `spring.profiles.active: dev`; subir a aplicação
-  localmente e confirmar (via log de inicialização ou `GET /diagnostics/oauth2-client-assertion`,
-  endpoint diagnóstico já existente) que o `token-uri` resolvido aponta para
-  `http://localhost:8080/realms/master`.
+  localmente e confirmar que o `issuer-uri` resolvido é `http://localhost:8080/realms/master` —
+  via log de inicialização (o Spring Security Resource Server registra a descoberta do JWKS a
+  partir do `issuer-uri` configurado) ou, indiretamente, observando que a aplicação sobe
+  corretamente na porta `8081` (perfil `dev`) e expõe `GET /oauth2/jwks` e `GET /api/public`; o
+  `issuer-uri` em si não é exposto por nenhum endpoint HTTP desta aplicação, sendo usado apenas
+  internamente pelo Spring Security para descobrir o JWKS do Keycloak.
 - **Perfil `docker`**: `mvn clean package -P docker`; inspecionar
   `target/classes/application.yml` e confirmar `spring.profiles.active: docker`; subir o artefato
-  dentro do container definido em `docker/dockercompose.yml` e confirmar, pelos logs ou pelo mesmo
-  endpoint diagnóstico, que o `token-uri` resolvido aponta para `http://keycloak:8080/realms/master`
-  e que a troca `client_credentials` com o Keycloak do cenário Docker é bem-sucedida.
+  dentro do container definido em `docker/dockercompose.yml` e confirmar, pelo mesmo mecanismo
+  (log de inicialização, ou observar que a aplicação sobe corretamente na porta `8080` do
+  container e expõe `GET /oauth2/jwks` e `GET /api/public`), que o `issuer-uri` resolvido é
+  `http://keycloak:8080/realms/master` e que a validação de um access token emitido pelo Keycloak
+  do cenário Docker é bem-sucedida.
 
 ## Impacto na documentação autoritativa
 

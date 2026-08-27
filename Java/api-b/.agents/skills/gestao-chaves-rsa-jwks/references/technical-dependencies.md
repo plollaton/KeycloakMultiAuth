@@ -18,8 +18,8 @@ metadata:
   e serializa a chave pública no formato esperado pelo Keycloak; sem ela não há
   como montar o endpoint no contrato exigido.
 - **Endpoint HTTP público, fora de qualquer regra de autenticação da
-  `SecurityFilterChain`** — sem essa liberação, o Keycloak não consegue obter a
-  chave pública para validar o client_assertion, quebrando todo o fluxo RFC
-  7523.
+  `SecurityFilterChain`** — sem essa liberação, consumidores externos (por
+  exemplo o Keycloak) não conseguem obter a chave pública sem autenticação
+  prévia, o que quebraria a finalidade de publicação do JWKS.
 - **OpenAPI/Swagger** — documenta o contrato do endpoint `/oauth2/jwks`; sem ela
   o endpoint fica sem descrição formal para quem for integrá-lo.

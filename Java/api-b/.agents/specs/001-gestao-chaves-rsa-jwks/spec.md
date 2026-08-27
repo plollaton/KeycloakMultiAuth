@@ -20,7 +20,6 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 **Out:**
 
-- Geração e assinatura do `client_assertion` JWT e obtenção do `access_token` junto ao Keycloak — domínio "Cliente OAuth2 com Client Assertion JWT (RFC 7523)".
 - Validação de `access_tokens` e proteção dos endpoints `GET /api/protected`, `GET /api/public` e `GET /actuator/health` — domínio "Servidor de Recursos OAuth2 (Validação de Access Token)".
 - Chamadas desta aplicação a outras APIs do cenário (ex.: api-b) — fora do escopo das funcionalidades obrigatórias do material de negócio.
 - Persistência, histórico ou publicação de chaves de rotações anteriores — o JWKS desta POC expõe apenas a chave pública ativa.
@@ -37,12 +36,11 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 **Belongs to other domains (cross-domain, does not become a task here):**
 
-- Geração do JWT `client_assertion` (claims `iss`, `sub`, `aud`, `exp`, `iat`, `jti`, assinatura RS256) e chamada `POST /oauth2/token` ao Keycloak → domínio "Cliente OAuth2 com Client Assertion JWT (RFC 7523)".
 - Validação de `access_tokens` contra o JWKS do Keycloak e as regras de proteção de `GET /api/protected`, `GET /api/public` e `GET /actuator/health` na `SecurityFilterChain` → domínio "Servidor de Recursos OAuth2 (Validação de Access Token)".
 
 ## User stories
 
-1. Como Keycloak (consumidor externo), quero obter a chave pública ativa da aplicação em formato JWK Set via um endpoint HTTP sem autenticação, para validar a assinatura do `client_assertion` recebido desta aplicação.
+1. Como Keycloak (consumidor externo), quero obter a chave pública ativa da aplicação em formato JWK Set via um endpoint HTTP sem autenticação, para validar assinaturas produzidas pela aplicação.
 2. Como Keycloak (consumidor externo), quero que a publicação da chave pública reflita automaticamente o par de chaves atualmente mantido pela aplicação, para continuar validando assinaturas corretamente após uma rotação de chaves, sem depender de um passo manual de republicação.
 3. Como responsável pela operação da aplicação, quero que o par de chaves ativo seja sempre o par fixo mantido nos arquivos da aplicação, para ter uma chave determinística e estável entre reinicializações.
 4. Como integrador que consome o contrato desta aplicação, quero consultar a documentação OpenAPI/Swagger do endpoint `GET /oauth2/jwks`, para conhecer o formato de resposta sem precisar ler o código-fonte.
@@ -72,9 +70,8 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 ## Cross-domain dependencies
 
-- **"Cliente OAuth2 com Client Assertion JWT (RFC 7523)"** — consome a chave privada mantida por este domínio para assinar o `client_assertion` enviado ao Keycloak.
 - **"Servidor de Recursos OAuth2 (Validação de Access Token)"** — estende a `SecurityFilterChain` criada por este domínio, adicionando suas próprias regras de proteção (`GET /api/protected`) e liberação (`GET /api/public`, `GET /actuator/health`), mantendo `GET /oauth2/jwks` liberado.
-- **Keycloak** (sistema externo) — consome `GET /oauth2/jwks` para validar a assinatura do `client_assertion` e, conforme o cenário, de `access_tokens` emitidos com essa chave.
+- **Keycloak** (sistema externo) — consome `GET /oauth2/jwks` para validar assinaturas produzidas com a chave privada da aplicação e, conforme o cenário, de `access_tokens` emitidos com essa chave.
 
 ## Risks and observations
 

@@ -54,9 +54,8 @@ nenhum dos dois (`spec.md`, seção "Risks and observations").
 
 **Confirmação:** nenhuma das duas opções tem base documental — decisão de implementação para um
 endpoint de exemplo sem contrato de negócio fixado, mantendo o mesmo padrão de status HTTP (`200`)
-já usado nos demais endpoints de exemplo/diagnóstico do projeto (`GET /oauth2/jwks`, `GET
-/diagnostics/oauth2-client-assertion`), em vez de introduzir um `204` que nenhum outro endpoint do
-projeto usa.
+já usado nos demais endpoints de exemplo/diagnóstico do projeto (`GET /oauth2/jwks`), em vez de
+introduzir um `204` que nenhum outro endpoint do projeto usa.
 
 **Consequências:** o corpo de resposta desses dois endpoints pode ser ajustado livremente no
 futuro sem impacto de negócio, já que a skill de domínio não fixa um contrato para eles — apenas a

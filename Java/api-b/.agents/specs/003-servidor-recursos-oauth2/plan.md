@@ -34,8 +34,8 @@ que este spec cria, e como cada uma é montada:
   vive.
 - **Classificação de endpoints na `SecurityFilterChain`**: `SecurityConfig` (pacote `web`, já
   existente) ganha `GET /api/public` e `GET /actuator/health` na lista de caminhos com
-  `permitAll()`, ao lado dos caminhos já liberados pelos domínios 1 e 2
-  (`/oauth2/jwks`, `/diagnostics/oauth2-client-assertion`, Swagger/OpenAPI). `GET /api/protected`
+  `permitAll()`, ao lado do caminho já liberado pelo domínio "Gestão de Chaves RSA e Publicação
+  JWKS" (`/oauth2/jwks`, Swagger/OpenAPI). `GET /api/protected`
   não entra nessa lista: permanece coberto por `anyRequest().authenticated()`, que passa a ter
   efeito prático pela primeira vez com a adição de `.oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))`
   à mesma cadeia — o `JwtDecoder` customizado acima é detectado automaticamente pelo configurador,

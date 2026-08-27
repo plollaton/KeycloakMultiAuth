@@ -9,10 +9,11 @@
 - JDK 21 e Maven instalados, para os builds e execuções locais (casos do perfil `dev`).
 - Docker e Docker Compose instalados, com o stack de `docker/dockercompose.yml` (`postgres`,
   `keycloak`, `api-a`) disponível para subir (casos do perfil `docker`).
-- Endpoint diagnóstico `GET /diagnostics/oauth2-client-assertion` disponível — já existente no
-  domínio "Cliente OAuth2 com Client Assertion JWT (RFC 7523)" — usado para observar, sem expor
-  segredos, qual `token-uri` a aplicação resolveu ao tentar a troca `client_credentials` com o
-  Keycloak.
+- Rota pública `GET /oauth2/jwks` disponível — usada para observar, sem expor segredos, que a
+  aplicação subiu com o perfil esperado na porta esperada (`8081` para o perfil `dev`, `8080` para
+  o perfil `docker`), como indício indireto de qual `issuer-uri` foi resolvido; o log de
+  inicialização do Spring Boot é a fonte direta para confirmar o `issuer-uri` resolvido, já que
+  essa propriedade não é exposta por nenhum endpoint HTTP desta aplicação.
 
 ## Story 1 — Perfil dev (padrão)
 
@@ -31,10 +32,12 @@ iguais aos hoje presentes em `application.yml`.
 1. Com o artefato gerado pelo TC-1, executar `java -jar target/aplicacao-segura-*.jar`
    localmente, sem definir nenhuma variável de ambiente adicional.
 2. Aguardar a inicialização completa da aplicação.
-3. Chamar `GET /diagnostics/oauth2-client-assertion`.
+3. Chamar `GET /oauth2/jwks` na porta `8081` (porta configurada para o perfil `dev`) e inspecionar
+   o log de inicialização do Spring Boot.
 
-**Expected:** a aplicação sobe sem erro e o `token-uri` usado na troca `client_credentials` é
-`http://localhost:8080/realms/master`, valor de `application.yml`.
+**Expected:** a aplicação sobe sem erro, responde em `8081` e o `GET /oauth2/jwks` retorna com
+sucesso, confirmando que subiu com o perfil `dev`; o `issuer-uri` resolvido, observável no log de
+inicialização, é `http://localhost:8080/realms/master`, valor de `application.yml`.
 
 ### TC-3 (recommended) — Especificar `-P dev` explicitamente produz o mesmo resultado do build padrão
 
@@ -62,12 +65,15 @@ execução, e não por alteração dos valores de `application.yml` no momento d
 1. Com o artefato gerado pelo TC-4, subir o container `api-a` definido em
    `docker/dockercompose.yml` (que monta `target/` como volume, conforme `Dockerfile-api`).
 2. Aguardar a inicialização completa da aplicação dentro do container.
-3. Chamar `GET /diagnostics/oauth2-client-assertion` (pela porta publicada `8085`).
+3. Chamar `GET /oauth2/jwks` na porta `8080` (porta configurada para o perfil `docker`) e
+   inspecionar o log de inicialização do container.
 
-**Expected:** o `token-uri` resolvido pela aplicação é `http://keycloak:8080/realms/master`,
+**Expected:** a aplicação sobe sem erro dentro do container, responde em `8080` e o
+`GET /oauth2/jwks` retorna com sucesso, confirmando que subiu com o perfil `docker`; o
+`issuer-uri` resolvido, observável no log de inicialização, é `http://keycloak:8080/realms/master`,
 valor de `application-docker.yml` aplicado pelo Spring Boot ao mesclá-lo sobre `application.yml`
-porque `spring.profiles.active=docker`; a troca `client_credentials` com o Keycloak do cenário
-Docker é concluída com sucesso.
+porque `spring.profiles.active=docker`; a validação de um access token emitido pelo Keycloak do
+cenário Docker é concluída com sucesso.
 
 ## Story 3 — Ativação automática, sem variável externa
 
@@ -83,10 +89,11 @@ Docker é concluída com sucesso.
 1. Repetir a subida do container `api-a` com o artefato compilado com o perfil `docker` (mesmo
    artefato do TC-4), sem adicionar manualmente `SPRING_PROFILES_ACTIVE` nem qualquer outra
    variável de ambiente ao serviço.
-2. Chamar `GET /diagnostics/oauth2-client-assertion` (pela porta publicada `8085`).
+2. Chamar `GET /oauth2/jwks` na porta `8080` e inspecionar o log de inicialização do container.
 
-**Expected:** mesmo resultado do TC-5 — o `token-uri` resolvido é
-`http://keycloak:8080/realms/master` — confirmando que a seleção do ambiente decorre
-inteiramente do perfil Maven usado na compilação, sem depender de nenhuma variável de ambiente
-externa. Compilando e executando com o perfil `dev` (artefato do TC-1, execução do TC-2), o mesmo
-se verifica para `http://localhost:8080/realms/master`.
+**Expected:** mesmo resultado do TC-5 — a aplicação responde em `8080` e o `issuer-uri` resolvido,
+observável no log de inicialização, é `http://keycloak:8080/realms/master` — confirmando que a
+seleção do ambiente decorre inteiramente do perfil Maven usado na compilação, sem depender de
+nenhuma variável de ambiente externa. Compilando e executando com o perfil `dev` (artefato do
+TC-1, execução do TC-2), o mesmo se verifica para a aplicação respondendo em `8081` com
+`issuer-uri` resolvido igual a `http://localhost:8080/realms/master`.

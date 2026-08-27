@@ -13,8 +13,8 @@ quem cria o scaffold Maven do projeto:
   architecture fixada em `AGENTS.md`, e o volume de classes desta POC não justifica a
   complexidade): `com.aplicacaosegura.jwks` para este domínio (bean do par de chaves,
   controller do JWKS), `com.aplicacaosegura.web` para a classe principal `@SpringBootApplication`
-  e configuração REST/OpenAPI comuns aos três domínios. Domínios futuros (`oauth2client`,
-  `resourceserver`) recebem seus próprios pacotes quando forem implementados. Detalhes da decisão
+  e configuração REST/OpenAPI comuns aos três domínios. O domínio futuro `resourceserver`
+  recebe seu próprio pacote quando for implementado. Detalhes da decisão
   em [`research.md`](./research.md#estrutura-de-pacotes).
 
 ## Technical decisions
@@ -44,12 +44,12 @@ que este spec cria, e como cada uma é montada:
   campos `kty`/`kid`/`use`/`alg`/`n`/`e`, seguindo o padrão daquela skill.
 
 Decisão explícita de escopo do scaffold (o que este unit traz para o `pom.xml` agora vs. o que
-fica pendente para os domínios "Cliente OAuth2" e "Servidor de Recursos OAuth2"): apenas
+fica pendente para o domínio "Servidor de Recursos OAuth2"): apenas
 `spring-boot-starter-web`, `spring-boot-starter-security`, `springdoc-openapi-starter-webmvc-ui` e
 `com.nimbusds:nimbus-jose-jwt` entram agora — `spring-boot-starter-oauth2-client` e
-`spring-boot-starter-oauth2-resource-server` ficam explicitamente pendentes para quando os
-domínios que os configuram (client_assertion e validação de access token, respectivamente) forem
-implementados. Justificativa completa em
+`spring-boot-starter-oauth2-resource-server` ficam explicitamente pendentes para quando o
+domínio que os configura (validação de access token) for
+implementado. Justificativa completa em
 [`research.md`](./research.md#escopo-de-dependencias-maven-do-scaffold).
 
 Lombok não é adotado neste domínio (opcional conforme `AGENTS.md`); ver

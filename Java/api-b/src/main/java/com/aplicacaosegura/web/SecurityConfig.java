@@ -18,7 +18,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET,
                         "/oauth2/jwks",
-                        "/diagnostics/oauth2-client-assertion",
                         "/api/public",
                         "/actuator/health",
                         "/v3/api-docs/**",

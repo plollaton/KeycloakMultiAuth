@@ -9,15 +9,6 @@ spring:
     name: aplicacao-segura
   security:
     oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: api-a
-            authorization-grant-type: client_credentials
-            client-authentication-method: private_key_jwt
-        provider:
-          keycloak:
-            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8080/realms/master
