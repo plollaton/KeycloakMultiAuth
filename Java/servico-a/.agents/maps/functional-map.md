@@ -1,6 +1,6 @@
 ---
 name: functional-map
-description: Mapa dos quatro domínios de negócio da POC de autenticação (gestão de chaves/JWKS, cliente OAuth2 com client_assertion, resource server e acesso cruzado a aplicação externa), com dependências, ordem sugerida e o efeito das decisões de documentação (OpenAPI/Swagger) e testes (sem testes automatizados) já incorporado a cada domínio.
+description: Mapa dos três domínios de negócio da POC de autenticação (gestão de chaves/JWKS, cliente OAuth2 com client_assertion e acesso cruzado a aplicação externa), com dependências, ordem sugerida e o efeito das decisões de documentação (OpenAPI/Swagger) e testes (sem testes automatizados) já incorporado a cada domínio.
 metadata:
   author: clovis-cli
   responsibility: Mapa de identificação dos domínios de negócio (bounded contexts), seus limites, dependências e ordem de implementação sugerida. Índice de domínios para geração de skills e para o fluxo spec-driven; não detalha regras de negócio nem duplica as decisões transversais, que vivem no discovery-answers.md.
@@ -42,30 +42,11 @@ metadata:
   - Gestão de Chaves RSA e Publicação JWKS — fornece a chave privada necessária para assinar o client_assertion; sem ela este domínio não tem o que assinar.
 - **Nível de confiança**: high (fluxo descrito passo a passo no descritivo.md, incluindo claims e parâmetros exatos da requisição).
 
-## 3. Servidor de Recursos OAuth2 (Validação de Access Token)
-
-- **Objetivo de negócio**: proteger endpoints da aplicação validando os access_tokens emitidos pelo Keycloak, liberando sem autenticação um conjunto específico de endpoints (incluindo o próprio JWKS deste projeto).
-- **Evidência no material fornecido**: `descritivo.md` linhas 31-33 (papel de resource server no fluxo) e linhas 95-104 (Funcionalidade obrigatória 4) — ver índice em [[business-input]].
-- **Dependências**: depende de **Gestão de Chaves RSA e Publicação JWKS** (a mesma `SecurityFilterChain` deste domínio precisa manter `/oauth2/jwks` liberado como público, junto de `/api/public` e `/actuator/health`).
-- **Regras inferidas**:
-  - `SecurityFilterChain` valida o JWT em endpoints protegidos usando o JWKS do **Keycloak** (não o JWKS próprio da aplicação);
-  - validação das claims `iss`, `exp` e `aud` do access_token recebido;
-  - `GET /api/protected` exige token válido; `GET /api/public`, `GET /actuator/health` e `GET /oauth2/jwks` são públicos.
-- Os endpoints `GET /api/public` e `GET /api/protected` são documentados via OpenAPI/Swagger; `/actuator/health` segue a documentação padrão do Spring Boot Actuator.
-- Este domínio não possui testes automatizados nesta POC.
-- **Dependências externas relevantes**: Keycloak (publica o JWKS usado para validar os access_tokens recebidos); `spring-boot-starter-oauth2-resource-server`; Spring Boot Actuator (endpoint `/actuator/health`); OpenAPI/Swagger (documentação de `/api/public` e `/api/protected`).
-- **Domain technical dependencies**:
-  - Keycloak — publica o JWKS usado para validar assinatura e claims dos access_tokens recebidos; sem ele não há chave pública para validar nada.
-  - Spring Boot Actuator — expõe `/actuator/health` como endpoint público de exemplo; sem ele esse endpoint de exemplo não existe.
-  - Gestão de Chaves RSA e Publicação JWKS — define que `/oauth2/jwks` deve permanecer público dentro da mesma cadeia de segurança deste domínio.
-  - OpenAPI/Swagger — documenta o contrato de `/api/public` e `/api/protected`; sem ela esses endpoints ficam sem descrição formal para quem for integrá-los.
-- **Nível de confiança**: high (endpoints, papéis de validação e claims descritos explicitamente no descritivo.md).
-
-## 4. Acesso Cruzado a Aplicação Externa
+## 3. Acesso Cruzado a Aplicação Externa
 
 - **Objetivo de negócio**: demonstrar o cenário de acesso cruzado entre aplicações do material de negócio — usando o access_token obtido junto ao Keycloak pelo domínio Cliente OAuth2 com Client Assertion JWT, a própria aplicação chama `GET /api/protected` de uma aplicação externa (cenário `servico-a` → `api-b`), apresentando esse token como cliente daquela API.
 - **Evidência no material fornecido**: `descritivo.md` linhas 5-12 e 14-33 (cenário `servico-a` → `api-b`) — ver índice em [[business-input]].
-- **Dependências**: depende de **Cliente OAuth2 com Client Assertion JWT** (fornece o access_token via `OAuth2AuthorizedClientManager`) e de **Servidor de Recursos OAuth2** (mantém `GET /api/cross` público na `SecurityFilterChain` que possui).
+- **Dependências**: depende de **Cliente OAuth2 com Client Assertion JWT** (fornece o access_token via `OAuth2AuthorizedClientManager`).
 - **Regras inferidas**:
   - `GET /api/cross` é público: processado sem exigir autenticação do chamador;
   - o endpoint obtém um access_token junto ao Keycloak via `OAuth2AuthorizedClientManager` e chama `GET /api/protected` da aplicação externa configurada na propriedade `app.cross.external-base-url`;
@@ -75,7 +56,7 @@ metadata:
 - **Dependências externas relevantes**: aplicação externa (cenário `servico-a` → `api-b`, expõe `GET /api/protected` e valida o access_token apresentado, fora do controle deste repositório); `spring-boot-starter-web` (`RestClient`); OpenAPI/Swagger (documentação de `GET /api/cross`).
 - **Domain technical dependencies**:
   - Cliente OAuth2 com Client Assertion JWT — fornece o `OAuth2AuthorizedClientManager` já configurado, usado para obter o access_token apresentado na chamada de saída; sem ele este domínio não tem como se autenticar perante a aplicação externa.
-  - Servidor de Recursos OAuth2 — mantém `GET /api/cross` público na `SecurityFilterChain` que possui; sem essa liberação o endpoint ficaria inacessível sem um access_token do próprio chamador.
+  - `SecurityFilterChain` da aplicação — mantém `GET /api/cross` público; sem essa liberação o endpoint ficaria inacessível sem um access_token do próprio chamador.
   - `spring-boot-starter-web` (`RestClient`) — fornece o cliente HTTP usado na chamada de saída; sem ele não há como montar essa chamada na convenção de stack fixada para o projeto.
   - OpenAPI/Swagger — documenta o contrato de `GET /api/cross`; sem ela o endpoint fica sem descrição formal para quem for integrá-lo.
 - **Nível de confiança**: high (endpoint, propriedade de configuração e comportamento de sucesso/falha descritos explicitamente no código e na spec fundadora deste domínio).

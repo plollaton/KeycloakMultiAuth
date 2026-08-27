@@ -6,17 +6,13 @@ específicas (skills em `.agents/skills/`) complementam este arquivo, nunca o co
 ## Visão geral do projeto e do domínio
 
 `aplicacao-segura` é uma POC (prova de conceito) de backend Java que valida um fluxo de
-autenticação OAuth2 entre múltiplas aplicações mediadas por um Keycloak. A aplicação assume
-simultaneamente dois papéis:
+autenticação OAuth2 entre múltiplas aplicações mediadas por um Keycloak. A aplicação atua como
+**OAuth2 Client**: autentica-se no Keycloak via `client_credentials` usando um `client_assertion`
+JWT assinado com chave privada própria (RFC 7523), obtendo um `access_token` usado para chamar uma
+aplicação externa em seu próprio nome.
 
-- **OAuth2 Client**: autentica-se no Keycloak via `client_credentials` usando um `client_assertion`
-  JWT assinado com chave privada própria (RFC 7523), obtendo um `access_token` para chamar outras
-  aplicações.
-- **OAuth2 Resource Server**: valida `access_tokens` emitidos pelo Keycloak em endpoints próprios
-  protegidos, usando o JWKS publicado pelo Keycloak (não o JWKS da própria aplicação).
-
-Para viabilizar o primeiro papel, a aplicação também gera e mantém seu próprio par de chaves RSA
-e publica a chave pública correspondente em um endpoint JWKS próprio, para que o Keycloak consiga
+Para viabilizar esse papel, a aplicação também gera e mantém seu próprio par de chaves RSA e
+publica a chave pública correspondente em um endpoint JWKS próprio, para que o Keycloak consiga
 validar o `client_assertion` recebido — inclusive após rotação de chaves.
 
 Os três domínios de negócio da POC, com regras e dependências detalhadas, estão descritos em
@@ -26,8 +22,9 @@ Os três domínios de negócio da POC, com regras e dependências detalhadas, es
    fixo (2048 bits, RS256, `kid` único) no início da aplicação e expõe `GET /oauth2/jwks` (público).
 2. **Cliente OAuth2 com Client Assertion JWT (RFC 7523)** — depende do domínio 1 para assinar o
    `client_assertion` enviado ao Keycloak.
-3. **Servidor de Recursos OAuth2 (validação de access token)** — depende do domínio 1 para manter
-   `/oauth2/jwks` público na mesma `SecurityFilterChain` que protege `GET /api/protected`.
+3. **Acesso Cruzado a Aplicação Externa** — depende do domínio 2 para obter o `access_token`
+   apresentado ao chamar `GET /api/protected` de uma aplicação externa (cenário `servico-a` →
+   `api-b`) através de `GET /api/cross`.
 
 ## Stack e tecnologias principais
 
@@ -40,7 +37,6 @@ Stack alvo fixada pelo material de negócio (`.agents/context/business-input.md`
 - Spring Security 7.x
 - Jakarta EE 11
 - `spring-boot-starter-oauth2-client`
-- `spring-boot-starter-oauth2-resource-server`
 - Nimbus JOSE+JWT (via starters, para construir/serializar `RSAKey`/`JWKSet` e o `client_assertion`)
 - Lombok (opcional)
 - Maven, como ferramenta de build (`pom.xml`)
@@ -71,10 +67,8 @@ for criado.
   `client_assertion`.
 - O `client_assertion` enviado ao Keycloak inclui as claims `iss`, `sub`, `aud`, `exp`, `iat`,
   `jti`, assinadas em RS256 com a chave privada da aplicação.
-- A `SecurityFilterChain` que protege os endpoints da aplicação valida `access_tokens` contra o
-  JWKS do **Keycloak** (não o JWKS próprio da aplicação) e checa as claims `iss`, `exp` e `aud`.
-  Nessa mesma cadeia, `GET /api/public`, `GET /actuator/health` e `GET /oauth2/jwks` permanecem
-  públicos; `GET /api/protected` exige token válido.
+- A `SecurityFilterChain` da aplicação libera `GET /oauth2/jwks`, `GET /api/cross` e
+  `GET /actuator/health` sem autenticação; qualquer outra requisição é rejeitada por padrão.
 
 ## Restrições globais
 

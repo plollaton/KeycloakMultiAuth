@@ -18,22 +18,10 @@ spring:
         provider:
           keycloak:
             token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/master
-
-app:
-  security:
-    resource-server:
-      expected-audience: api-b
 
 logging:
   level:
     root: info
-    com:
-      aplicacaosegura:
-        resourceserver:
-          cross: debug
     jakarta:
       servlet:
         http:
