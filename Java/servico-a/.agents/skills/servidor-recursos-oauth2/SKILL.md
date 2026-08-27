@@ -60,8 +60,10 @@ liberação pertence ao domínio ou à convenção de origem, não a este.
    válido para ser processado.
 3. `GET /api/public` é um endpoint público: processado sem exigir
    autenticação.
-4. `GET /api/cross` é um endpoint público: processado sem exigir
-   autenticação do chamador.
+4. `GET /api/cross` — o endpoint de acesso cruzado a uma aplicação externa,
+   cuja regra de negócio pertence ao domínio Acesso Cruzado a Aplicação
+   Externa — permanece público dentro desta mesma `SecurityFilterChain`. Essa
+   liberação é um pré-requisito daquele domínio, implementado por este.
 5. `GET /actuator/health` é público: endpoint de verificação de saúde da
    aplicação, liberado como exemplo de endpoint de infraestrutura sem
    exigência de autenticação.
@@ -133,7 +135,7 @@ outro chamador autorizado pelo Keycloak.
 |---|---|---|
 | `GET /api/protected` | Protegido | Exige `access_token` válido (regras 2, 7 e 8) |
 | `GET /api/public` | Público | Sem exigência de autenticação (regra 3) |
-| `GET /api/cross` | Público | Sem exigência de autenticação do chamador (regra 4) |
+| `GET /api/cross` | Público | Liberado nesta cadeia por pré-requisito do domínio Acesso Cruzado a Aplicação Externa (regra 4) |
 | `GET /actuator/health` | Público | Sem exigência de autenticação (regra 5) |
 | `GET /oauth2/jwks` | Público | Liberado nesta cadeia por pré-requisito do domínio de Gestão de Chaves RSA e Publicação JWKS (regra 6) |
 

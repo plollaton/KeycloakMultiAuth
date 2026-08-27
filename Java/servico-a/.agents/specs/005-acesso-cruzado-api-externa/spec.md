@@ -6,8 +6,8 @@ Novo endpoint público `GET /api/cross` nesta aplicação, que aciona uma chamad
 
 ## Domain
 
-- Slug: `servidor-recursos-oauth2`
-- Skill: [`.agents/skills/servidor-recursos-oauth2/SKILL.md`](../../skills/servidor-recursos-oauth2/SKILL.md)
+- Slug: `acesso-cruzado-api-externa`
+- Skill: [`.agents/skills/acesso-cruzado-api-externa/SKILL.md`](../../skills/acesso-cruzado-api-externa/SKILL.md)
 
 ## Estado atual do código
 

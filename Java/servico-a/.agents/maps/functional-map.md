@@ -1,6 +1,6 @@
 ---
 name: functional-map
-description: Mapa dos três domínios de negócio da POC de autenticação (gestão de chaves/JWKS, cliente OAuth2 com client_assertion e resource server), com dependências, ordem sugerida e o efeito das decisões de documentação (OpenAPI/Swagger) e testes (sem testes automatizados) já incorporado a cada domínio.
+description: Mapa dos quatro domínios de negócio da POC de autenticação (gestão de chaves/JWKS, cliente OAuth2 com client_assertion, resource server e acesso cruzado a aplicação externa), com dependências, ordem sugerida e o efeito das decisões de documentação (OpenAPI/Swagger) e testes (sem testes automatizados) já incorporado a cada domínio.
 metadata:
   author: clovis-cli
   responsibility: Mapa de identificação dos domínios de negócio (bounded contexts), seus limites, dependências e ordem de implementação sugerida. Índice de domínios para geração de skills e para o fluxo spec-driven; não detalha regras de negócio nem duplica as decisões transversais, que vivem no discovery-answers.md.
@@ -34,7 +34,7 @@ metadata:
 - **Regras inferidas**:
   - geração de um JWT client_assertion com as claims `iss`, `sub`, `aud`, `exp`, `iat`, `jti`, assinado em RS256;
   - chamada `POST /oauth2/token` do Keycloak com `grant_type=client_credentials`, `client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer` e `client_assertion=<JWT assinado>`;
-  - o access_token obtido é usado para chamadas subsequentes a outras APIs; o descritivo não inclui, entre as funcionalidades obrigatórias, a implementação dessa chamada a uma API específica (ex.: api-b) — trata-se apenas do cenário de contexto, fora do escopo obrigatório desta aplicação.
+  - o access_token obtido é usado para chamadas subsequentes a outras APIs; essa chamada a uma API específica (cenário `servico-a` → `api-b`) é implementada pelo domínio **Acesso Cruzado a Aplicação Externa**.
 - Este domínio não expõe endpoint REST próprio, portanto não entra na documentação OpenAPI/Swagger do projeto; não possui testes automatizados nesta POC.
 - **Dependências externas relevantes**: Keycloak (emite o access_token e valida o client_assertion contra o JWKS deste projeto); `spring-boot-starter-oauth2-client`; Nimbus JOSE+JWT.
 - **Domain technical dependencies**:
@@ -60,3 +60,22 @@ metadata:
   - Gestão de Chaves RSA e Publicação JWKS — define que `/oauth2/jwks` deve permanecer público dentro da mesma cadeia de segurança deste domínio.
   - OpenAPI/Swagger — documenta o contrato de `/api/public` e `/api/protected`; sem ela esses endpoints ficam sem descrição formal para quem for integrá-los.
 - **Nível de confiança**: high (endpoints, papéis de validação e claims descritos explicitamente no descritivo.md).
+
+## 4. Acesso Cruzado a Aplicação Externa
+
+- **Objetivo de negócio**: demonstrar o cenário de acesso cruzado entre aplicações do material de negócio — usando o access_token obtido junto ao Keycloak pelo domínio Cliente OAuth2 com Client Assertion JWT, a própria aplicação chama `GET /api/protected` de uma aplicação externa (cenário `servico-a` → `api-b`), apresentando esse token como cliente daquela API.
+- **Evidência no material fornecido**: `descritivo.md` linhas 5-12 e 14-33 (cenário `servico-a` → `api-b`) — ver índice em [[business-input]].
+- **Dependências**: depende de **Cliente OAuth2 com Client Assertion JWT** (fornece o access_token via `OAuth2AuthorizedClientManager`) e de **Servidor de Recursos OAuth2** (mantém `GET /api/cross` público na `SecurityFilterChain` que possui).
+- **Regras inferidas**:
+  - `GET /api/cross` é público: processado sem exigir autenticação do chamador;
+  - o endpoint obtém um access_token junto ao Keycloak via `OAuth2AuthorizedClientManager` e chama `GET /api/protected` da aplicação externa configurada na propriedade `app.cross.external-base-url`;
+  - chamada aceita: responde `200` com `CrossAccessResponse` (`status: "ok"`); chamada ou obtenção de token falhas: responde `502`, sem expor access_token nem material de chave privada.
+- O endpoint `GET /api/cross` é documentado via OpenAPI/Swagger, junto dos demais endpoints REST do projeto.
+- Este domínio não possui testes automatizados nesta POC.
+- **Dependências externas relevantes**: aplicação externa (cenário `servico-a` → `api-b`, expõe `GET /api/protected` e valida o access_token apresentado, fora do controle deste repositório); `spring-boot-starter-web` (`RestClient`); OpenAPI/Swagger (documentação de `GET /api/cross`).
+- **Domain technical dependencies**:
+  - Cliente OAuth2 com Client Assertion JWT — fornece o `OAuth2AuthorizedClientManager` já configurado, usado para obter o access_token apresentado na chamada de saída; sem ele este domínio não tem como se autenticar perante a aplicação externa.
+  - Servidor de Recursos OAuth2 — mantém `GET /api/cross` público na `SecurityFilterChain` que possui; sem essa liberação o endpoint ficaria inacessível sem um access_token do próprio chamador.
+  - `spring-boot-starter-web` (`RestClient`) — fornece o cliente HTTP usado na chamada de saída; sem ele não há como montar essa chamada na convenção de stack fixada para o projeto.
+  - OpenAPI/Swagger — documenta o contrato de `GET /api/cross`; sem ela o endpoint fica sem descrição formal para quem for integrá-lo.
+- **Nível de confiança**: high (endpoint, propriedade de configuração e comportamento de sucesso/falha descritos explicitamente no código e na spec fundadora deste domínio).

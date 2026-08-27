@@ -21,10 +21,6 @@ app:
 logging:
   level:
     root: info
-    com:
-      aplicacaosegura:
-        resourceserver:
-          cross: debug
     jakarta:
       servlet:
         http:

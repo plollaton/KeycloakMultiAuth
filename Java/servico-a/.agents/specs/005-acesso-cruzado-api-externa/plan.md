@@ -2,11 +2,9 @@
 
 ## Stack and structure
 
-Aplicação Spring Boot 4.1.x / Java 21 / Jakarta EE 11, conforme `AGENTS.md`. O novo endpoint vive
-no pacote `com.aplicacaosegura.resourceserver`, junto de `ResourceServerExampleController`
-(`GET /api/protected`, `GET /api/public`), mesma família de endpoints de exemplo já mantida pelo
-domínio "Servidor de Recursos OAuth2". A chamada de saída consome, por injeção, o
-`OAuth2AuthorizedClientManager` já configurado em
+Aplicação Spring Boot 4.1.x / Java 21 / Jakarta EE 11, conforme `AGENTS.md`. O endpoint vive no
+pacote `com.aplicacaosegura.crossaccess`, próprio deste domínio. A chamada de saída consome, por
+injeção, o `OAuth2AuthorizedClientManager` já configurado em
 `com.aplicacaosegura.oauth2client.OAuth2ClientAssertionConfig` (domínio "Cliente OAuth2 com Client
 Assertion JWT") — o mesmo bean já usado por `OAuth2ClientAssertionDiagnosticsController` — sem
 alterar aquele pacote.

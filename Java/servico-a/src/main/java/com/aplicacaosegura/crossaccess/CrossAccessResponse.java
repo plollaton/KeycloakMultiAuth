@@ -1,4 +1,4 @@
-package com.aplicacaosegura.resourceserver;
+package com.aplicacaosegura.crossaccess;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
