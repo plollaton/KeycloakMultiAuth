@@ -2,7 +2,7 @@
 
 ## Overview
 
-Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos arquivos `api-a-private.pem`/`api-a-cert.pem`, e publicação pública da chave pública ativa em formato JWK Set, para que o Keycloak valide assinaturas produzidas com a chave privada da aplicação, com rotação de chaves refletida automaticamente quando esses arquivos são substituídos.
+Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos arquivos `api-b.pem`/`api-b-cert.pem`, e publicação pública da chave pública ativa em formato JWK Set, para que o Keycloak valide assinaturas produzidas com a chave privada da aplicação, com rotação de chaves refletida automaticamente quando esses arquivos são substituídos.
 
 ## Domain
 
@@ -13,7 +13,7 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 **In:**
 
-- Carregamento, na inicialização da aplicação, do par de chaves RSA fixo mantido nos arquivos `api-a-private.pem` (chave privada) e `api-a-cert.pem` (certificado com a chave pública correspondente) em `src/main/resources`, com identificador (`kid`) único derivado do número de série do certificado.
+- Carregamento, na inicialização da aplicação, do par de chaves RSA fixo mantido nos arquivos `api-b.pem` (chave privada) e `api-b-cert.pem` (certificado com a chave pública correspondente) em `src/main/resources`, com identificador (`kid`) único derivado do número de série do certificado.
 - Publicação pública (sem autenticação) da chave pública ativa em formato JWK Set.
 - Reflexo automático de rotação de chaves na publicação, sem exigir sincronização manual adicional.
 - Documentação do endpoint de publicação via OpenAPI/Swagger.
@@ -28,7 +28,7 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 **This spec implements:**
 
-- Componente que mantém o par de chaves RSA ativo da aplicação (2048 bits, RS256), carregado na inicialização do par fixo de arquivos `api-a-private.pem` e `api-a-cert.pem` em `src/main/resources`, com `kid` derivado do número de série do certificado.
+- Componente que mantém o par de chaves RSA ativo da aplicação (2048 bits, RS256), carregado na inicialização do par fixo de arquivos `api-b.pem` e `api-b-cert.pem` em `src/main/resources`, com `kid` derivado do número de série do certificado.
 - Endpoint `GET /oauth2/jwks`, público, retornando um `JWKSet` com a chave pública ativa nos campos `kty`/`kid`/`use`/`alg`/`n`/`e`.
 - Anotações OpenAPI/Swagger do endpoint `GET /oauth2/jwks`, conforme a skill técnica `documentacao-api-openapi`.
 - Scaffold Maven do projeto (`pom.xml`, layout `src/main/java`/`src/main/resources`, classe de aplicação Spring Boot) e a dependência `springdoc-openapi-starter-webmvc-ui` — infraestrutura transversal que este domínio cria por ser o primeiro a precisar dela, já que o repositório ainda não contém nenhum scaffold de build nem código-fonte.
@@ -56,11 +56,11 @@ Manutenção do par de chaves RSA próprio da aplicação, fixo e carregado dos 
 
 **Story 2 — Rotação de chaves refletida automaticamente:**
 
-- Dado que os arquivos `api-a-private.pem` e `api-a-cert.pem` são substituídos por um novo par de chaves válido, quando a aplicação é reiniciada, então `GET /oauth2/jwks` passa a refletir o novo `kid` e o novo módulo/expoente, sem exigir nenhuma ação adicional de republicação.
+- Dado que os arquivos `api-b.pem` e `api-b-cert.pem` são substituídos por um novo par de chaves válido, quando a aplicação é reiniciada, então `GET /oauth2/jwks` passa a refletir o novo `kid` e o novo módulo/expoente, sem exigir nenhuma ação adicional de republicação.
 
 **Story 3 — Carregamento do par de chaves fixo:**
 
-- Dado que os arquivos `api-a-private.pem` e `api-a-cert.pem` estão presentes em `src/main/resources`, quando a aplicação inicializa, então o par de chaves desses arquivos é carregado (2048 bits, RS256) e usado como par ativo.
+- Dado que os arquivos `api-b.pem` e `api-b-cert.pem` estão presentes em `src/main/resources`, quando a aplicação inicializa, então o par de chaves desses arquivos é carregado (2048 bits, RS256) e usado como par ativo.
 - Dado o par de chaves carregado, quando a aplicação é reiniciada sem que os arquivos sejam alterados, então `GET /oauth2/jwks` retorna o mesmo `kid` e o mesmo módulo/expoente da consulta anterior.
 
 **Story 4 — Documentação OpenAPI/Swagger:**

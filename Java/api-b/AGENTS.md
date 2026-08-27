@@ -12,9 +12,8 @@ papel de:
 - **OAuth2 Resource Server**: valida `access_tokens` emitidos pelo Keycloak em endpoints próprios
   protegidos, usando o JWKS publicado pelo Keycloak (não o JWKS da própria aplicação).
 
-A aplicação também gera e mantém seu próprio par de chaves RSA e publica a chave pública
-correspondente em um endpoint JWKS próprio (`GET /oauth2/jwks`, público) — inclusive após rotação
-de chaves.
+A aplicação também carrega seu próprio par de chaves RSA fixo e publica a chave pública
+correspondente em um endpoint JWKS próprio (`GET /oauth2/jwks`, público).
 
 Os dois domínios de negócio da POC, com regras e dependências detalhadas, estão descritos em
 `.agents/maps/functional-map.md`:
@@ -39,33 +38,36 @@ Stack alvo fixada pelo material de negócio (`.agents/context/business-input.md`
 - Lombok (opcional)
 - Maven, como ferramenta de build (`pom.xml`)
 
-O diretório do projeto ainda não contém o scaffold de build (`pom.xml`) nem código-fonte.
-
 ## Estrutura do repositório
 
-No estado atual (greenfield), o repositório contém apenas:
-
+- `pom.xml` — scaffold Maven do projeto, com os perfis `dev` (porta 8081, ativo por padrão) e
+  `docker` (porta 8080), cada um definindo seu próprio `issuer-uri` do Keycloak.
+- `src/main/java/com/aplicacaosegura/` — código-fonte da aplicação, em três pacotes:
+  - `jwks` — carregamento do par de chaves RSA fixo e publicação de `GET /oauth2/jwks`.
+  - `resourceserver` — validação de `access_tokens` do Keycloak e endpoints de exemplo.
+  - `web` — `SecurityConfig`, com a `SecurityFilterChain` única da aplicação.
+- `src/main/resources/` — par de chaves RSA fixo (`api-b.pem`, `api-b-cert.pem`) carregado na
+  inicialização.
+- `src/main/resources-dev/` e `src/main/resources-docker/` — `application.yml` de cada perfil
+  Maven.
 - `descritivo.md` — material de negócio bruto que originou a descoberta funcional.
 - `.agents/` — artefatos e skills da descoberta funcional e do fluxo assistido por agentes (ver
   seção dedicada abaixo).
 - `.clovis/`, `.claude/` — configuração das ferramentas de CLI/agente usadas neste fluxo.
 
-A estrutura de código-fonte (camadas, pacotes, layout `src/main/java`) ainda não existe e será
-definida quando o scaffold Maven (`pom.xml`, layout padrão `src/main/java`/`src/main/resources`)
-for criado.
-
 ## Convenções arquiteturais importantes
 
 - O par de chaves RSA da aplicação é carregado como bean na inicialização (2048 bits, algoritmo
-  RS256) a partir do par fixo de arquivos `api-a-private.pem` (chave privada, PKCS8) e
-  `api-a-cert.pem` (certificado X.509 com a chave pública) em `src/main/resources`; o `kid` é o
+  RS256) a partir do par fixo de arquivos `api-b.pem` (chave privada, PKCS8) e
+  `api-b-cert.pem` (certificado X.509 com a chave pública) em `src/main/resources`; o `kid` é o
   número de série do certificado.
 - `GET /oauth2/jwks` expõe apenas a chave pública da aplicação, no formato `kty`/`kid`/`use`/`alg`/
   `n`/`e`, e é público (sem autenticação).
 - A `SecurityFilterChain` que protege os endpoints da aplicação valida `access_tokens` contra o
   JWKS do **Keycloak** (não o JWKS próprio da aplicação) e checa as claims `iss`, `exp`, `aud` e
-  `iat`. Nessa mesma cadeia, `GET /api/public`, `GET /actuator/health` e `GET /oauth2/jwks`
-  permanecem públicos; `GET /api/protected` exige token válido.
+  `iat`. Nessa mesma cadeia, `GET /api/public`, `GET /actuator/health`, `GET /oauth2/jwks`,
+  `GET /v3/api-docs/**`, `GET /swagger-ui/**` e `GET /swagger-ui.html` permanecem públicos;
+  `GET /api/protected` exige token válido.
 
 ## Restrições globais
 
@@ -74,8 +76,7 @@ for criado.
 
 ## Comandos de build, lint e teste
 
-O projeto usa Maven (`pom.xml`) como ferramenta de build. Uma vez criado o scaffold, os comandos
-padrão são:
+O projeto usa Maven (`pom.xml`) como ferramenta de build. Os comandos padrão são:
 
 - Build: `mvn clean package`
 - Executar a aplicação: `mvn spring-boot:run`

@@ -8,13 +8,12 @@ roteiro de validação manual do domínio e como referência de cobertura na fas
 - Aplicação em execução (`mvn spring-boot:run`), com `spring-boot-starter-oauth2-resource-server`
   e `spring-boot-starter-actuator` presentes no `pom.xml` e a `SecurityFilterChain`
   (`SecurityConfig`) configurada com `.oauth2ResourceServer(...)`.
-- `spring.security.oauth2.resourceserver.jwt.issuer-uri` (`KEYCLOAK_ISSUER_URI`) apontando para um
-  Keycloak/realm acessível pela aplicação, e `app.security.resource-server.expected-audience`
-  (`RESOURCE_SERVER_EXPECTED_AUDIENCE`) configurado com um valor de `aud` alcançável por um token
-  emitido por esse realm.
+- `spring.security.oauth2.resourceserver.jwt.issuer-uri` apontando para um Keycloak/realm
+  acessível pela aplicação, e `app.security.resource-server.expected-audience` configurado com um
+  valor de `aud` alcançável por um token emitido por esse realm.
 - Um client no Keycloak desse realm capaz de obter um `access_token` (ex.: via `client_credentials`)
-  com a claim `aud` igual ao valor configurado em `RESOURCE_SERVER_EXPECTED_AUDIENCE`, exceto
-  quando o caso indicar o contrário.
+  com a claim `aud` igual ao valor configurado em `app.security.resource-server.expected-audience`,
+  exceto quando o caso indicar o contrário.
 - Cliente HTTP capaz de enviar requisições com e sem cabeçalho `Authorization` (ex.: `curl`).
 - Para os casos de falha de claim: um segundo Keycloak/realm (ou um client configurado para emitir
   para uma audiência diferente) capaz de gerar um `access_token` com `iss` ou `aud` diferentes dos
@@ -50,7 +49,7 @@ roteiro de validação manual do domínio e como referência de cobertura na fas
 ### TC-4 (mandatory) — Issuer diferente do configurado rejeitado
 
 1. Obtenha um `access_token` emitido por um issuer diferente do configurado em
-   `KEYCLOAK_ISSUER_URI` (ex.: outro realm do Keycloak).
+   `spring.security.oauth2.resourceserver.jwt.issuer-uri` (ex.: outro realm do Keycloak).
 2. Chame `GET /api/protected` com o cabeçalho `Authorization: Bearer <access_token>`.
 
 **Expected:** resposta `401`.
@@ -58,7 +57,7 @@ roteiro de validação manual do domínio e como referência de cobertura na fas
 ### TC-5 (mandatory) — Audience diferente da configurada rejeitada
 
 1. Obtenha um `access_token` válido do Keycloak configurado, cuja claim `aud` não contenha o valor
-   configurado em `RESOURCE_SERVER_EXPECTED_AUDIENCE`.
+   configurado em `app.security.resource-server.expected-audience`.
 2. Chame `GET /api/protected` com o cabeçalho `Authorization: Bearer <access_token>`.
 
 **Expected:** resposta `401`.

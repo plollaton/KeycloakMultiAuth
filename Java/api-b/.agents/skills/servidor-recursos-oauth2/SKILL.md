@@ -75,7 +75,8 @@ liberação pertence ao domínio ou à convenção de origem, não a este.
    - a claim `iss` (issuer): deve corresponder ao emissor esperado (o
      Keycloak/realm que esta aplicação reconhece como fonte confiável de
      tokens);
-   - a claim `exp` (expiration): o token não pode estar expirado no momento
+   - a claim `exp` (expiration): deve estar presente — um `access_token`
+     sem `exp` é rejeitado — e o token não pode estar expirado no momento
      da requisição;
    - a claim `aud` (audience): deve corresponder ao destinatário esperado por
      esta aplicação;
@@ -85,7 +86,7 @@ liberação pertence ao domínio ou à convenção de origem, não a este.
    Os valores concretos de `iss` e `aud` esperados (a URL/identificador do
    realm do Keycloak e o identificador de audiência desta aplicação) são
    específicos do ambiente de implantação e não são fixados pelo material de
-   negócio disponível; a exigência de negócio fixada é que essas quatro
+   negócio disponível; a exigência de negócio fixada é que essas cinco
    verificações (assinatura, `iss`, `exp`, `aud`, `iat`) ocorram para todo
    `access_token` apresentado a um endpoint protegido.
 7. Um `access_token` que falhe em qualquer uma das verificações da regra 6
@@ -150,7 +151,7 @@ não deste domínio.
   **Keycloak**, nunca o JWKS publicado pelo domínio de Gestão de Chaves RSA e
   Publicação JWKS desta aplicação — os dois JWKS têm propósitos distintos e
   não são intercambiáveis.
-- As quatro verificações da regra 6 (assinatura, `iss`/`exp`/`aud`/`iat`) são
+- As cinco verificações da regra 6 (assinatura, `iss`/`exp`/`aud`/`iat`) são
   cumulativas: a falha de qualquer uma delas é suficiente para rejeitar o
   `access_token`, independentemente do resultado das demais.
 - Os valores concretos esperados de `iss` e `aud` são configuração

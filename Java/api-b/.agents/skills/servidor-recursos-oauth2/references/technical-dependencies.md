@@ -18,10 +18,13 @@ metadata:
   `access_tokens` recebidos; sem ele não há chave pública para validar nada.
 - **`spring-boot-starter-oauth2-resource-server`** — starter que fornece o
   suporte de framework para validação de JWT como resource server (busca do
-  JWKS do emissor, verificação de assinatura e das claims `iss`/`exp`/`aud`
-  na `SecurityFilterChain`); sem ele essa validação precisaria ser
-  implementada manualmente, fora da convenção de stack fixada para o
-  projeto.
+  JWKS do emissor, verificação de assinatura e das claims `iss`/`exp` na
+  `SecurityFilterChain`); as claims `aud` e `iat` não são cobertas pela
+  autoconfiguração do starter e são validadas por validadores próprios deste
+  domínio (`AudienceValidator` e `IssuedAtValidator`), compostos ao validador
+  padrão via `DelegatingOAuth2TokenValidator`. Sem o starter, toda essa
+  validação — inclusive a padrão — precisaria ser implementada manualmente,
+  fora da convenção de stack fixada para o projeto.
 - **Spring Boot Actuator** — expõe `/actuator/health` como endpoint público
   de exemplo; sem ele esse endpoint de exemplo não existe.
 - **Gestão de Chaves RSA e Publicação JWKS** — define que `/oauth2/jwks` deve

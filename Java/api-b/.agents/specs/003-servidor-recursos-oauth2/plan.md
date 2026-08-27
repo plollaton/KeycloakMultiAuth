@@ -20,18 +20,17 @@ Dependências técnicas do domínio (`.agents/skills/servidor-recursos-oauth2/re
 que este spec cria, e como cada uma é montada:
 
 - **`spring-boot-starter-oauth2-resource-server`**: configurado via
-  `spring.security.oauth2.resourceserver.jwt.issuer-uri` (propriedade `KEYCLOAK_ISSUER_URI` por
-  ambiente), habilitando a descoberta automática do JWKS do Keycloak pelo `JwtDecoder`
+  `spring.security.oauth2.resourceserver.jwt.issuer-uri` (valor definido por ambiente), habilitando
+  a descoberta automática do JWKS do Keycloak pelo `JwtDecoder`
   autoconfigurado e a validação padrão de assinatura, `exp` e `iss` que essa autoconfiguração já
   entrega. Um `OAuth2TokenValidator<Jwt>` adicional injeta a validação de `aud` (claim não coberta
   pela autoconfiguração), combinado ao validador padrão via `DelegatingOAuth2TokenValidator` em um
   bean `JwtDecoder` explícito. Alternativas e confirmação em
   [`research.md`](./research.md#mecanismo-de-validacao-do-access_token).
-- **Valor esperado de `aud`**: propriedade própria da aplicação (`app.security.resource-server.expected-audience`,
-  variável de ambiente `RESOURCE_SERVER_EXPECTED_AUDIENCE`) lida pelo validador de claim
-  customizado — a skill de domínio já registra que esse valor é específico do ambiente de
-  implantação e não é fixado pelo material de negócio; este plano não o fixa, apenas define onde
-  vive.
+- **Valor esperado de `aud`**: propriedade própria da aplicação
+  (`app.security.resource-server.expected-audience`) lida pelo validador de claim customizado — a
+  skill de domínio já registra que esse valor é específico do ambiente de implantação e não é
+  fixado pelo material de negócio; este plano não o fixa, apenas define onde vive.
 - **Classificação de endpoints na `SecurityFilterChain`**: `SecurityConfig` (pacote `web`, já
   existente) ganha `GET /api/public` e `GET /actuator/health` na lista de caminhos com
   `permitAll()`, ao lado do caminho já liberado pelo domínio "Gestão de Chaves RSA e Publicação

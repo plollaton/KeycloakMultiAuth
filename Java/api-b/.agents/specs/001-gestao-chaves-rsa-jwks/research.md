@@ -89,13 +89,17 @@ além dos listados nesta unidade responde com falha de autenticação em vez de 
 **Contexto.** A skill de domínio deixa a estratégia de geração do `kid` a cargo da implementação,
 exigindo apenas unicidade.
 
-**Decisão:** `UUID.randomUUID().toString()` no momento da construção do bean `RSAKey`.
+**Decisão:** número de série do certificado X.509 carregado (`certificate.getSerialNumber().toString(16)`,
+em hexadecimal), obtido no momento da construção do bean `RSAKey`.
 
-**Confirmação:** uso direto de API do JDK, sem dependência nova nem padrão debatível; unicidade
-prática suficiente para uma POC com um único par de chaves ativo por vez.
+**Confirmação:** uso direto da API padrão do JDK (`java.security.cert.X509Certificate`) sobre um
+dado já presente no certificado carregado, sem dependência nova nem padrão debatível; unicidade
+prática suficiente para uma POC com um único par de chaves ativo por vez, e determinística entre
+reinicializações enquanto o certificado não mudar.
 
-**Consequências:** nenhuma — o `kid` muda a cada reinicialização com geração em memória, o que já
-é o comportamento de rotação esperado pela regra 7 da skill.
+**Consequências:** nenhuma — o `kid` é estável entre reinicializações enquanto os arquivos
+`api-b.pem`/`api-b-cert.pem` não mudarem, e só muda quando esses arquivos são substituídos por um
+novo par de chaves, o que já é o comportamento de rotação esperado pela regra 7 da skill.
 
 ## Lombok
 

@@ -41,17 +41,17 @@ chave pública seja público.
 
 1. Na inicialização da aplicação, o par de chaves RSA ativo (2048 bits,
    algoritmo RS256) é carregado do par fixo de arquivos mantidos nos recursos
-   da própria aplicação: a chave privada do arquivo `api-a-private.pem`
-   (formato PKCS8) e a chave pública do certificado `api-a-cert.pem` (formato
+   da própria aplicação: a chave privada do arquivo `api-b.pem`
+   (formato PKCS8) e a chave pública do certificado `api-b-cert.pem` (formato
    X.509).
 2. O par de chaves recebe um identificador (`kid`) único, igual ao número de
-   série do certificado `api-a-cert.pem`. Esse identificador acompanha a chave
+   série do certificado `api-b-cert.pem`. Esse identificador acompanha a chave
    pública publicada e permite ao consumidor (Keycloak) diferenciar chaves ao
    longo do tempo — é a base do suporte à rotação de chaves.
 3. A chave privada nunca é exposta pela aplicação: é mantida apenas
    internamente.
 4. O par de chaves ativo é sempre o par fixo mantido pelos arquivos
-   `api-a-private.pem` e `api-a-cert.pem`, incluídos nos recursos da
+   `api-b.pem` e `api-b-cert.pem`, incluídos nos recursos da
    aplicação; não há geração de um par de chaves aleatório nem outra fonte
    alternativa configurável.
 5. A chave pública correspondente ao par de chaves ativo é exposta via um
@@ -60,8 +60,8 @@ chave pública seja público.
    autenticação. Essa exigência é uma regra de negócio deste domínio (não uma
    opção de configuração), pois o Keycloak precisa conseguir buscar a chave
    pública sem se autenticar previamente.
-7. Rotação de chaves: ao substituir os arquivos `api-a-private.pem` e
-   `api-a-cert.pem` por um novo par de chaves e reiniciar a aplicação, o
+7. Rotação de chaves: ao substituir os arquivos `api-b.pem` e
+   `api-b-cert.pem` por um novo par de chaves e reiniciar a aplicação, o
    endpoint de publicação passa a refletir automaticamente a nova chave
    pública e o novo `kid`, sem exigir nenhuma sincronização manual adicional —
    o endpoint sempre publica a chave correspondente ao par de arquivos
@@ -70,7 +70,7 @@ chave pública seja público.
 ## Fluxos e ciclo de vida
 
 O par de chaves desta aplicação tem uma única fonte: os arquivos
-`api-a-private.pem` e `api-a-cert.pem` mantidos nos recursos da aplicação,
+`api-b.pem` e `api-b-cert.pem` mantidos nos recursos da aplicação,
 lidos a cada inicialização.
 
 A rotação de chaves ocorre quando esses arquivos são substituídos por um novo
@@ -121,7 +121,7 @@ aplicações do cenário nem chaves de rotações anteriores.
 - O par de chaves deve ter exatamente 2048 bits e algoritmo RS256; nenhum outro
   tamanho ou algoritmo é suportado por esta regra de negócio.
 - O identificador (`kid`) do par de chaves deve ser único; nesta aplicação
-  corresponde ao número de série do certificado `api-a-cert.pem`.
+  corresponde ao número de série do certificado `api-b-cert.pem`.
 
 ## Integrações e dependências externas
 

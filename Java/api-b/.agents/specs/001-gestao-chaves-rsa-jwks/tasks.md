@@ -20,8 +20,8 @@ Esta POC não implementa testes automatizados (`discovery-answers.md`); a valida
 - [x] **T2. Carregamento do par de chaves RSA a partir de arquivo fixo**
   - Depends on: T1
   - Componente, no pacote `com.aplicacaosegura.jwks`, que carrega o par de chaves RSA ativo
-    (2048 bits, RS256) do par fixo de arquivos `api-a-private.pem` (chave privada, PKCS8) e
-    `api-a-cert.pem` (certificado X.509 com a chave pública), ambos em `src/main/resources`, com
+    (2048 bits, RS256) do par fixo de arquivos `api-b.pem` (chave privada, PKCS8) e
+    `api-b-cert.pem` (certificado X.509 com a chave pública), ambos em `src/main/resources`, com
     `kid` igual ao número de série do certificado.
   - Cobre o carregamento fixo da Story 3, do `spec.md` (`TC-6`, `TC-7`).
 

@@ -19,8 +19,8 @@ import org.springframework.util.StreamUtils;
 
 /**
  * Mantém o par de chaves RSA ativo da aplicação, carregado na inicialização do par fixo de
- * arquivos em {@code src/main/resources}: {@code api-a-private.pem} (chave privada, PKCS8) e
- * {@code api-a-cert.pem} (certificado X.509 com a chave pública correspondente). O {@code kid}
+ * arquivos em {@code src/main/resources}: {@code api-b.pem} (chave privada, PKCS8) e
+ * {@code api-b-cert.pem} (certificado X.509 com a chave pública correspondente). O {@code kid}
  * publicado é o número de série do certificado.
  */
 @Configuration

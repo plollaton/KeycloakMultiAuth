@@ -25,8 +25,8 @@ que este spec cria, e como cada uma é montada:
 - **Nimbus JOSE+JWT** — dependência Maven direta `com.nimbusds:nimbus-jose-jwt` (versão gerenciada
   pelo BOM do `spring-boot-starter-parent`). Usada em um `@Configuration` que constrói o par de
   chaves ativo como bean `RSAKey` (2048 bits, RS256, `keyUse` `sig`) na inicialização, carregando a
-  chave privada do arquivo `api-a-private.pem` (PKCS8) e a chave pública do certificado
-  `api-a-cert.pem` (X.509), ambos em `src/main/resources`, com `kid` igual ao número de série do
+  chave privada do arquivo `api-b.pem` (PKCS8) e a chave pública do certificado
+  `api-b-cert.pem` (X.509), ambos em `src/main/resources`, com `kid` igual ao número de série do
   certificado; e em um `@RestController` que serializa `new JWKSet(rsaKey.toPublicJWK())` em
   `GET /oauth2/jwks`. Escopo da dependência (agora, via biblioteca direta, e não pelos starters
   OAuth2) detalhado em
@@ -57,8 +57,8 @@ Lombok não é adotado neste domínio (opcional conforme `AGENTS.md`); ver
 
 ## Data model
 
-Não se aplica: o par de chaves RSA é mantido como bean carregado dos arquivos `api-a-private.pem`
-e `api-a-cert.pem` em `src/main/resources`, não como entidade persistida em banco de dados.
+Não se aplica: o par de chaves RSA é mantido como bean carregado dos arquivos `api-b.pem`
+e `api-b-cert.pem` em `src/main/resources`, não como entidade persistida em banco de dados.
 `data-model.md` dispensado — não há tabelas, relações nem constraints para este domínio.
 
 ## External contracts
@@ -83,7 +83,7 @@ registrada em `.agents/context/discovery-answers.md`. Nenhuma infraestrutura de 
 ## Impact on the authoritative documentation
 
 A skill `gestao-chaves-rsa-jwks` e o `AGENTS.md` foram atualizados para descrever o par de chaves
-como carregado do par fixo de arquivos `api-a-private.pem`/`api-a-cert.pem`, substituindo a
+como carregado do par fixo de arquivos `api-b.pem`/`api-b-cert.pem`, substituindo a
 descrição anterior de geração em memória por padrão com carregamento opcional via PKCS12 — decisão
 humana registrada a partir de um gap levantado durante a implementação, já refletida neste plano
 e no `spec.md`. Não há divergência remanescente entre este plano e a documentação autoritativa do

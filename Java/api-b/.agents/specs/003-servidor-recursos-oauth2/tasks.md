@@ -7,10 +7,10 @@ Esta POC não implementa testes automatizados (`discovery-answers.md`); a valida
   - Depends on: none
   - Prerequisito: dependências `spring-boot-starter-oauth2-resource-server` e
     `spring-boot-starter-actuator` no `pom.xml`, ainda não presentes.
-  - `JwtDecoder` configurado via `spring.security.oauth2.resourceserver.jwt.issuer-uri`
-    (`KEYCLOAK_ISSUER_URI`), com um `OAuth2TokenValidator<Jwt>` adicional que valida a claim `aud`
-    contra `app.security.resource-server.expected-audience` (`RESOURCE_SERVER_EXPECTED_AUDIENCE`),
-    combinado ao validador padrão de assinatura/`exp`/`iss` via `DelegatingOAuth2TokenValidator`.
+  - `JwtDecoder` configurado via `spring.security.oauth2.resourceserver.jwt.issuer-uri`, com um
+    `OAuth2TokenValidator<Jwt>` adicional que valida a claim `aud` contra
+    `app.security.resource-server.expected-audience`, combinado ao validador padrão de
+    assinatura/`exp`/`iss` via `DelegatingOAuth2TokenValidator`.
   - `SecurityConfig` (pacote `web`) passa a incluir `GET /api/public` e `GET /actuator/health` na
     lista de caminhos com `permitAll()`, ao lado dos já liberados pelo domínio "Gestão de Chaves
     RSA e Publicação JWKS", e a aplicar

@@ -5,11 +5,11 @@ roteiro de validação manual do domínio e como referência de cobertura na fas
 
 ## Preconditions
 
-- Aplicação em execução (`mvn spring-boot:run`), com os arquivos `api-a-private.pem` e
-  `api-a-cert.pem` presentes em `src/main/resources`, exceto quando o caso indicar o contrário.
+- Aplicação em execução (`mvn spring-boot:run`), com os arquivos `api-b.pem` e
+  `api-b-cert.pem` presentes em `src/main/resources`, exceto quando o caso indicar o contrário.
 - Cliente HTTP capaz de fazer requisições sem enviar nenhuma credencial (ex.: `curl`).
-- Para os casos que envolvem rotação: um segundo par de arquivos `api-a-private.pem`/
-  `api-a-cert.pem` válido, com um par de chaves RSA distinto do par original, para substituir os
+- Para os casos que envolvem rotação: um segundo par de arquivos `api-b.pem`/
+  `api-b-cert.pem` válido, com um par de chaves RSA distinto do par original, para substituir os
   arquivos originais antes de reiniciar a aplicação.
 
 ## Story 1 — Publicação pública da chave pública
@@ -50,7 +50,7 @@ cenário nem chaves de rotações anteriores.
 ### TC-5 (mandatory) — Rotação via substituição do par de chaves fixo
 
 1. Com a aplicação no ar, chame `GET /oauth2/jwks` e registre o `kid` e o `n` retornados.
-2. Pare a aplicação, substitua os arquivos `api-a-private.pem` e `api-a-cert.pem` em
+2. Pare a aplicação, substitua os arquivos `api-b.pem` e `api-b-cert.pem` em
    `src/main/resources` por um novo par de chaves válido, e suba a aplicação novamente.
 3. Chame novamente `GET /oauth2/jwks`.
 
@@ -61,17 +61,17 @@ exigir nenhuma ação adicional de republicação.
 
 ### TC-6 (mandatory) — Carregamento do par de chaves fixo na inicialização
 
-1. Com os arquivos `api-a-private.pem` e `api-a-cert.pem` presentes em `src/main/resources`, suba
+1. Com os arquivos `api-b.pem` e `api-b-cert.pem` presentes em `src/main/resources`, suba
    a aplicação.
 2. Chame `GET /oauth2/jwks`.
 
 **Expected:** a resposta traz o par de chaves desses arquivos, com `alg: "RS256"` e `kid` igual ao
-número de série do certificado `api-a-cert.pem`.
+número de série do certificado `api-b-cert.pem`.
 
 ### TC-7 (mandatory) — Par de chaves estável entre reinicializações sem alteração dos arquivos
 
 1. Com a aplicação no ar, chame `GET /oauth2/jwks` e registre o `kid` e o `n` retornados.
-2. Reinicie a aplicação sem alterar os arquivos `api-a-private.pem`/`api-a-cert.pem`.
+2. Reinicie a aplicação sem alterar os arquivos `api-b.pem`/`api-b-cert.pem`.
 3. Chame novamente `GET /oauth2/jwks`.
 
 **Expected:** o `kid` e o `n` retornados no passo 3 são idênticos aos registrados no passo 1.

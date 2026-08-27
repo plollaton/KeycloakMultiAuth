@@ -10,12 +10,12 @@ metadata:
 
 ## 1. Gestão de Chaves RSA e Publicação JWKS
 
-- **Objetivo de negócio**: gerar e manter, na própria aplicação, o par de chaves RSA (2048 bits, RS256, `kid` único), e publicar a chave pública correspondente via endpoint JWKS público (`GET /oauth2/jwks`), para que consumidores externos possam validar assinaturas produzidas pela aplicação. Suporta rotação de chaves refletida automaticamente no JWKS.
+- **Objetivo de negócio**: carregar, na própria aplicação, o par de chaves RSA fixo (2048 bits, RS256, `kid` único), e publicar a chave pública correspondente via endpoint JWKS público (`GET /oauth2/jwks`), para que consumidores externos possam validar assinaturas produzidas pela aplicação.
 - **Evidência no material fornecido**: `descritivo.md` linhas 55-83 (Funcionalidades obrigatórias 1 e 2) e linhas 5-12 (cenário/rotação de chaves) — ver índice em [[business-input]].
 - **Dependências**: nenhuma (domínio de fundação para os demais).
 - **Regras inferidas**:
-  - bean de chave RSA gerado na inicialização da aplicação, 2048 bits, algoritmo RS256, com `kid` único;
-  - chave privada mantida em memória por padrão; carregamento opcional de um par de chaves de arquivo PKCS12 via `@ConfigurationProperties`;
+  - bean de chave RSA carregado na inicialização da aplicação, 2048 bits, algoritmo RS256, com `kid` único (número de série do certificado);
+  - par de chaves fixo, carregado a partir de `api-b.pem` (chave privada, PKCS8) e `api-b-cert.pem` (certificado X.509 com a chave pública) em `src/main/resources`;
   - endpoint `GET /oauth2/jwks` público (sem autenticação), retornando um `JWKSet` contendo apenas a chave pública, no formato `kty`/`kid`/`use`/`alg`/`n`/`e`.
 - O endpoint `GET /oauth2/jwks` é documentado via OpenAPI/Swagger, junto dos demais endpoints REST do projeto.
 - Este domínio não possui testes automatizados nesta POC.
@@ -33,8 +33,8 @@ metadata:
 - **Dependências**: depende de **Gestão de Chaves RSA e Publicação JWKS** (a mesma `SecurityFilterChain` deste domínio precisa manter `/oauth2/jwks` liberado como público, junto de `/api/public` e `/actuator/health`).
 - **Regras inferidas**:
   - `SecurityFilterChain` valida o JWT em endpoints protegidos usando o JWKS do **Keycloak** (não o JWKS próprio da aplicação);
-  - validação das claims `iss`, `exp` e `aud` do access_token recebido;
-  - `GET /api/protected` exige token válido; `GET /api/public`, `GET /actuator/health` e `GET /oauth2/jwks` são públicos.
+  - validação das claims `iss`, `exp`, `aud` e `iat` (com tolerância de relógio de 60 segundos) do access_token recebido;
+  - `GET /api/protected` exige token válido; `GET /api/public`, `GET /actuator/health`, `GET /oauth2/jwks`, `GET /v3/api-docs/**`, `GET /swagger-ui/**` e `GET /swagger-ui.html` são públicos.
 - Os endpoints `GET /api/public` e `GET /api/protected` são documentados via OpenAPI/Swagger; `/actuator/health` segue a documentação padrão do Spring Boot Actuator.
 - Este domínio não possui testes automatizados nesta POC.
 - **Dependências externas relevantes**: Keycloak (publica o JWKS usado para validar os access_tokens recebidos); `spring-boot-starter-oauth2-resource-server`; Spring Boot Actuator (endpoint `/actuator/health`); OpenAPI/Swagger (documentação de `/api/public` e `/api/protected`).

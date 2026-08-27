@@ -3,33 +3,34 @@
 ## Stack e estrutura
 
 Build Maven (`pom.xml`) do projeto `aplicacao-segura`, herdando de `spring-boot-starter-parent`
-(versão `4.1.1`), conforme `AGENTS.md`. Os recursos de configuração seguem o layout padrão
-`src/main/resources` já existente, com `application.yml` (base) e `application-docker.yml`
-(específico do perfil Spring `docker`). Nenhuma mudança de camada, pacote ou dependência de
-runtime é necessária — a unidade é inteiramente de build/empacotamento.
+(versão `4.1.1`), conforme `AGENTS.md`. Os recursos de configuração seguem o layout
+`src/main/resources` (base, com os arquivos `api-b.pem`/`api-b-cert.pem` do domínio de chaves
+RSA) somado a um diretório específico por ambiente — `src/main/resources-dev` ou
+`src/main/resources-docker` —, cada um com seu próprio `application.yml` autocontido. Nenhuma
+mudança de camada, pacote ou dependência de runtime é necessária — a unidade é inteiramente de
+build/empacotamento.
 
 ## Decisões técnicas
 
 - **Dois perfis Maven em `pom.xml`**: `dev` (com `<activation><activeByDefault>true</activeByDefault></activation>`)
-  e `docker`. Cada um define a propriedade `spring.profiles.active` (`dev`/`docker`
-  respectivamente), consumida pela filtragem de recurso abaixo.
-- **Filtragem de recurso Maven + ativação nativa de perfil Spring**: habilitar
-  `<filtering>true</filtering>` no `<resource>` correspondente a `src/main/resources`, com
-  delimitador dedicado `@...@` (evitando colisão com os placeholders `${...}` que o Spring usa para
-  variáveis de ambiente). `application.yml` passa a declarar
-  `spring.profiles.active: @spring.profiles.active@`; o `maven-resources-plugin` — já parte do
-  ciclo de vida padrão herdado de `spring-boot-starter-parent`, sem necessidade de nova dependência
-  — substitui o token pelo valor do perfil Maven ativo no momento do empacotamento. Em tempo de
-  execução, o próprio Spring Boot combina `application-docker.yml` sobre `application.yml` quando o
-  perfil ativo resolvido é `docker`, sem exigir `SPRING_PROFILES_ACTIVE` externo nem qualquer código
-  adicional. Alternativas avaliadas e a base de confirmação desta escolha estão em
-  [`research.md`](./research.md).
-- **`application-docker.yml` permanece sem alteração de conteúdo** — a unidade não modifica os
-  valores de ambiente já definidos (`token-uri`, `issuer-uri`, `expected-audience`), apenas o
-  mecanismo que os ativa.
+  e `docker`. Cada perfil declara seu próprio `<build><resources>`, apontando para
+  `src/main/resources-dev` (perfil `dev`) ou `src/main/resources-docker` (perfil `docker`); esse
+  `<resource>` de perfil é somado ao `<resource>` base `src/main/resources` já declarado fora de
+  `<profiles>`, que permanece incluído em qualquer perfil.
+- **`application.yml` próprio por diretório de ambiente, sem filtragem de recurso**: cada
+  diretório de perfil (`resources-dev`/`resources-docker`) contém seu próprio `application.yml`,
+  já com os valores finais do ambiente (porta do servidor, `issuer-uri`) e com
+  `spring.profiles.active` declarado estaticamente (`dev`/`docker`). Não há token de substituição
+  nem `<filtering>` habilitado — o `maven-resources-plugin` apenas copia, para cada perfil, o
+  diretório de recursos correspondente para o artefato empacotado. Alternativas avaliadas e a base
+  de confirmação desta escolha estão em [`research.md`](./research.md).
+- **`src/main/resources-dev/application.yml` e `src/main/resources-docker/application.yml`
+  permanecem sem alteração de conteúdo por esta unidade** — a unidade não modifica os valores de
+  ambiente já definidos (`issuer-uri`, `expected-audience`, porta), apenas o mecanismo de build que
+  os seleciona.
 - **Nenhum novo plugin de dependência é adicionado** ao `pom.xml` — a solução reaproveita o
-  `maven-resources-plugin` já ativo no ciclo de vida padrão, apenas habilitando filtragem no
-  `<build><resources>`.
+  `maven-resources-plugin` já ativo no ciclo de vida padrão, apenas com um `<resource>` adicional
+  por perfil.
 
 ## Modelo de dados
 

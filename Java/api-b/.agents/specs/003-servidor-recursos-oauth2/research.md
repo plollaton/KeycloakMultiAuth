@@ -31,10 +31,10 @@ restando código próprio apenas para `aud` em ambas as alternativas — não h�
 concorrente que reduza mais esse código sem se afastar do suporte nativo do starter já fixado.
 
 **Consequências:** a aplicação depende do endpoint de metadados do `issuer-uri` do Keycloak estar
-acessível na inicialização, para a descoberta do JWKS; o valor concreto de `issuer-uri` por
-ambiente fica em `KEYCLOAK_ISSUER_URI`, e o de `aud` esperado em
-`RESOURCE_SERVER_EXPECTED_AUDIENCE`, ambos como propriedades de ambiente, sem valor fixado pelo
-material de negócio (skill de domínio, regra 6).
+acessível na inicialização, para a descoberta do JWKS; o valor concreto de `issuer-uri`
+(`spring.security.oauth2.resourceserver.jwt.issuer-uri`) e o de `aud` esperado
+(`app.security.resource-server.expected-audience`) ficam definidos por ambiente, sem valor fixado
+pelo material de negócio (skill de domínio, regra 6).
 
 ## Endpoints de exemplo e corpo de resposta
 
