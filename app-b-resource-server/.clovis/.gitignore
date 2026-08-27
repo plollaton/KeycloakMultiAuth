@@ -1,8 +1,0 @@
-#
-# Diretório operacional do Clovis CLI.
-# Ignora tudo, exceto o estado durável de projeto e este arquivo.
-#
-
-*
-!.gitignore
-!cli-state.json
