@@ -89,6 +89,37 @@
                         <directory>src/main/resources-docker</directory>
                     </resource>
                 </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>copiar-jar</id>
+                                <!-- Executa logo após a criação do JAR -->
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Pasta de destino onde o JAR será copiado -->
+                                    <outputDirectory>${project.basedir}/publish</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <!-- Pasta de origem (padrão do Maven) -->
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <!-- Copia apenas arquivos .jar -->
+                                                <include>*.jar</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>

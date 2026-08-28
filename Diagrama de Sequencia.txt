@@ -1,0 +1,7 @@
+title Requisição Autenticada
+Servico A->>Servico A: Assina JWT com chave privada
+Servico A->>Servidor Autorizacao: POST /token + client_assertion
+Servidor Autorizacao->>Servidor Autorizacao: Valida chave com JWKS
+Servidor Autorizacao->>Servico A: Retorna Token
+Servico A->>API B:GET /recurso + Bearer
+API B->>API B: Valida token localmente

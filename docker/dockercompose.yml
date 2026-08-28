@@ -69,7 +69,7 @@ services:
     ports:
       - "8085:8080"
     volumes:
-      - ../Java/servico-a/target:/app/target:ro
+      - ../Java/servico-a/publish:/app/publish:ro
     networks:
       - default_network
   api-b:
@@ -83,7 +83,7 @@ services:
     ports:
       - "8086:8080"
     volumes:
-      - ../Java/api-b/target:/app/target:ro
+      - ../Java/api-b/publish:/app/publish:ro
     networks:
        - default_network
 

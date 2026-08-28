@@ -9,6 +9,11 @@
     </option>
     <option name="enabledProfiles">
       <list>
+        <option value="docker" />
+      </list>
+    </option>
+    <option name="disabledProfiles">
+      <list>
         <option value="dev" />
       </list>
     </option>
