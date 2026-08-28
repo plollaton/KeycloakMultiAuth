@@ -31,7 +31,7 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: password
-      KC_HEALTH_ENABLED: "false"
+      KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "false"
       KC_CACHE: local
     command:
@@ -51,28 +51,41 @@ services:
       - "8080:8080"
     networks:
       - default_network
-  api-a:
+      # O bloco abaixo CORRIGE o erro relatado
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000 && printf \"GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n\" >&3 && cat <&3 | grep -q \"200 OK\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 4
+      start_period: 20s # Aumentado caso o banco demore para iniciar
+  servico-a:
     build:
-      context: ../Java/aplicacao-segura
-      dockerfile: Dockerfile-api
-    container_name: api-a
+      context: ../Java/servico-a
+      dockerfile: Dockerfile-servico
+    container_name: servico-a
+    depends_on:
+      keycloak:
+        condition: service_healthy
     ports:
       - "8085:8080"
     volumes:
-      - ../Java/aplicacao-segura/target:/app/target:ro
+      - ../Java/servico-a/publish:/app/publish:ro
     networks:
       - default_network
-  servico-b:
+  api-b:
     build:
-      context: ../Java/aplicacao-segura
-      dockerfile: Dockerfile-servico
-    container_name: servico-b
+      context: ../Java/api-b
+      dockerfile: Dockerfile-api
+    container_name: api-b
+    depends_on:
+      keycloak:
+        condition: service_healthy
     ports:
       - "8086:8080"
     volumes:
-      - ../Java/aplicacao-segura/target:/app/target:ro
+      - ../Java/api-b/publish:/app/publish:ro
     networks:
-      - default_network
+       - default_network
 
 networks:
   default_network:

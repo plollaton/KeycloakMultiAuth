@@ -1,0 +1,21 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: docker
+  application:
+    name: aplicacao-segura
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/master
+
+app:
+  security:
+    resource-server:
+      expected-audience: api-b
+
+logging:
+  level:
+    root: info

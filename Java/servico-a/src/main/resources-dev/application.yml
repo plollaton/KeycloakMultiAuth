@@ -1,0 +1,31 @@
+server:
+  port: 8090
+spring:
+  profiles:
+    active: dev
+  application:
+    name: servico-a
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: servico-a
+            authorization-grant-type: client_credentials
+            client-authentication-method: private_key_jwt
+        provider:
+          keycloak:
+            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
+
+logging:
+  level:
+    root: info
+    jakarta:
+      servlet:
+        http:
+          HttpServlet: debug
+    org:
+      springframework:
+        security:
+          oauth2:
+            client: debug

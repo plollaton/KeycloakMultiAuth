@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: aplicacao-segura
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/master
+
+app:
+  security:
+    resource-server:
+      expected-audience: api-b
+
+logging:
+  level:
+    root: info
+    jakarta:
+      servlet:
+        http:
+          HttpServlet: debug
